@@ -1,0 +1,172 @@
+<?php
+
+namespace Http\controller\client\login;
+
+use Core\Database;
+use Core\App;
+use Core\Validator;
+use Core\ValidationException;
+
+class AuthController
+{
+    protected $db;
+
+    public function __construct()
+    {
+        $this->db = App::resolve(Database::class);
+    }
+
+    public function showLogin()
+    {
+        view('client/login/index.view.php');
+    }
+
+    public function login()
+    {
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+        // Validate the form inputs
+        $errors = [];
+
+        if (!Validator::email($email)) {
+            $errors['email'] = 'Please provide a valid email address.';
+        }
+
+        if (!Validator::string($password, 6, 255)) {
+            $errors['password'] = 'Please provide a password with at least 6 characters.';
+        }
+
+        if (!empty($errors)) {
+            ValidationException::throw($errors, [
+                'email' => $email
+            ]);
+        }
+
+        // Check if the user exists
+        $user = $this->db->query("
+            SELECT * FROM users WHERE email = ?
+        ", [$email])->find();
+
+        if (!$user) {
+            ValidationException::throw([
+                'email' => 'No account found with that email address.'
+            ], [
+                'email' => $email
+            ]);
+        }
+
+        // Check if the password is correct
+        if (!password_verify($password, $user['password'])) {
+            ValidationException::throw([
+                'password' => 'Invalid password.'
+            ], [
+                'email' => $email
+            ]);
+        }
+
+        // Start the session
+        session_regenerate_id(true);
+        $_SESSION['user'] = $user['id'];
+        $_SESSION['user_role'] = $user['role'];
+        $_SESSION['user_name'] = $user['name'];
+
+        // Redirect based on role
+        if ($user['role'] === 'superuser' || $user['role'] === 'admin') {
+            redirect('/dashboard');
+        } else {
+            redirect('/');
+        }
+    }
+
+    public function logout()
+    {
+        // Clear session data
+        $_SESSION = [];
+
+        // Clear the session cookie
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+
+        // Destroy the session
+        session_destroy();
+
+        redirect('/');
+    }
+
+    public function showRegistration()
+    {
+        view('client/registration/index.view.php');
+    }
+
+    public function register()
+    {
+        $name = $_POST['name'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+        $passwordConfirmation = $_POST['password_confirmation'] ?? '';
+
+        // Validate the form inputs
+        $errors = [];
+
+        if (!Validator::string($name, 2, 50)) {
+            $errors['name'] = 'Please provide a name between 2 and 50 characters.';
+        }
+
+        if (!Validator::email($email)) {
+            $errors['email'] = 'Please provide a valid email address.';
+        }
+
+        if (!Validator::string($password, 6, 255)) {
+            $errors['password'] = 'Please provide a password with at least 6 characters.';
+        }
+
+        if (!Validator::match($password, $passwordConfirmation)) {
+            $errors['password_confirmation'] = 'The passwords do not match.';
+        }
+
+        // Check if the email is already taken
+        $existingUser = $this->db->query("
+            SELECT * FROM users WHERE email = ?
+        ", [$email])->find();
+
+        if ($existingUser) {
+            $errors['email'] = 'This email is already registered.';
+        }
+
+        if (!empty($errors)) {
+            ValidationException::throw($errors, [
+                'name' => $name,
+                'email' => $email
+            ]);
+        }
+
+        // Create the user
+        $this->db->query("
+            INSERT INTO users (name, email, password, role)
+            VALUES (?, ?, ?, 'user')
+        ", [$name, $email, password_hash($password, PASSWORD_BCRYPT)]);
+
+        // Start the session
+        $user = $this->db->query("
+            SELECT * FROM users WHERE email = ?
+        ", [$email])->find();
+
+        session_regenerate_id(true);
+        $_SESSION['user'] = $user['id'];
+        $_SESSION['user_role'] = $user['role'];
+        $_SESSION['user_name'] = $user['name'];
+
+        redirect('/');
+    }
+}
