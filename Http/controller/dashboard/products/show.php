@@ -3,19 +3,18 @@
 use Core\App;
 use Core\Database;
 use Core\Services\ImageUploadService;
-
-//namespace Http\controller\dashboard\products;
-
-
 use Http\controller\dashboard\products\ProductsController;
+
 $db = App::resolve(Database::class);
 $cloudinary = App::resolve(ImageUploadService::class);
 $controller = new ProductsController($db, $cloudinary);
 
-
 $uri = $_SERVER['REQUEST_URI'];
-$method = $_SERVER['REQUEST_METHOD'];
+$id = basename($uri);
 
-if ($uri === '/products' && $method === 'GET') {
-    $controller->index('client');
+if (is_numeric($id)) {
+    $controller->showOneProduct($id);
+} else {
+    header('Location: /products');
+    exit();
 }

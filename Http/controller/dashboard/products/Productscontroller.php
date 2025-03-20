@@ -2,6 +2,7 @@
 
 namespace Http\controller\dashboard\products;
 
+use Core\App;
 use Core\Database;
 use Core\Validator;
 use Core\ValidationException;
@@ -21,9 +22,9 @@ class ProductsController
     public function index($page = "dashboard")
     {
         $products = $this->db->query("
-            SELECT p.*, c.name as category_name
+            SELECT p.*, c.category_name
             FROM products p
-            LEFT JOIN categories c ON p.category_id = c.id
+            LEFT JOIN categories c ON p.category_id = c.category_id
         ")->get();
 
         $categories = $this->db->query("SELECT * FROM categories")->get();
@@ -38,17 +39,17 @@ class ProductsController
     public function showOneProduct($id)
     {
         $product = $this->db->query("
-            SELECT p.*, c.name as category_name
+            SELECT p.*, c.category_name
             FROM products p
-            LEFT JOIN categories c ON p.category_id = c.id
-            WHERE p.id = ?
+            LEFT JOIN categories c ON p.category_id = c.category_id
+            WHERE p.product_id = ?
         ", [$id])->findOrFail();
         
         $relatedProducts = $this->db->query("
-            SELECT p.*, c.name as category_name
+            SELECT p.*, c.category_name
             FROM products p
-            LEFT JOIN categories c ON p.category_id = c.id
-            WHERE p.category_id = ? AND p.id != ?
+            LEFT JOIN categories c ON p.category_id = c.category_id
+            WHERE p.category_id = ? AND p.product_id != ?
             LIMIT 4
         ", [$product['category_id'], $id])->get();
 
@@ -61,19 +62,19 @@ class ProductsController
     public function showOneProductAddCart($id)
     {
         $product = $this->db->query("
-            SELECT p.*, c.name as category_name
+            SELECT p.*, c.category_name
             FROM products p
-            LEFT JOIN categories c ON p.category_id = c.id
-            WHERE p.id = ?
+            LEFT JOIN categories c ON p.category_id = c.category_id
+            WHERE p.product_id = ?
         ", [$id])->findOrFail();
         
         $quantity = isset($_GET['quantity']) ? max(1, intval($_GET['quantity'])) : 1;
-        if ($quantity > $product['quantity']) {
-            $_SESSION['cart_message'] = "Sorry, only {$product['quantity']} available in stock";
+        if ($quantity > $product['stock']) {
+            $_SESSION['cart_message'] = "Sorry, only {$product['stock']} available in stock";
         } else {
             $_SESSION['cart_message'] = "Product added to cart";
         }
-        $product['cart_quantity'] = min($quantity, $product['quantity']);
+        $product['cart_quantity'] = min($quantity, $product['stock']);
 
         return $product;
     }
@@ -82,7 +83,7 @@ class ProductsController
     {
         $products = $this->db->query("
             SELECT * FROM products
-            WHERE quantity > 19 AND quantity < 40
+            WHERE stock > 19 AND stock < 40
         ")->get();
         
         view($page . '/index.view.php', [
@@ -123,10 +124,10 @@ class ProductsController
         }
 
         $this->db->query("
-            INSERT INTO products (name, description, price, quantity, category_id, image_url)
+            INSERT INTO products (name, description, price, stock, category_id, image_url)
             VALUES (?, ?, ?, ?, ?, ?)", [
             $request['product-name'],
-            $request['product-decription'] ?? '',
+            $request['product-description'] ?? '',
             $request['product-price'],
             $request['product-stock'],
             $request['product-category'],
@@ -139,9 +140,9 @@ class ProductsController
     public function update($request)
     {
         $errors = [];
-        $id = $request['id'];
+        $id = $request['product_id'];
 
-        $product = $this->db->query("SELECT * FROM products WHERE id = ?", [$id])->findOrFail();
+        $product = $this->db->query("SELECT * FROM products WHERE product_id = ?", [$id])->findOrFail();
 
         if (!Validator::string($request['product-name-update'], 2, 255)) {
             $errors['product-name-update'] = 'Product name must be between 2 and 255 characters.';
@@ -175,12 +176,13 @@ class ProductsController
             SET name = ?,
                 description = ?,
                 price = ?,
-                quantity = ?,
+                stock = ?,
                 category_id = ?,
-                image_url = ?
-            WHERE id = ?", [
+                image_url = ?,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE product_id = ?", [
             $request['product-name-update'],
-            $request['product-decription-update'] ?? '',
+            $request['product-description-update'] ?? '',
             $request['product-price-update'],
             $request['product-stock-update'],
             $request['product-category-update'],
@@ -193,11 +195,11 @@ class ProductsController
     
     public function destroy($request)
     {
-        $id = $request['id'];
+        $id = $request['product_id'];
 
-        $product = $this->db->query("SELECT * FROM products WHERE id = ?", [$id])->findOrFail();
+        $product = $this->db->query("SELECT * FROM products WHERE product_id = ?", [$id])->findOrFail();
 
-        $this->db->query("DELETE FROM products WHERE id = ?", [$id]);
+        $this->db->query("DELETE FROM products WHERE product_id = ?", [$id]);
 
         redirect('/tbproducts');
     }
