@@ -1,0 +1,277 @@
+-- Categories table
+CREATE TABLE categories (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
+    category_name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Motorcycle Brands table
+CREATE TABLE motorcycle_brands (
+    brand_id INT AUTO_INCREMENT PRIMARY KEY,
+    brand_name VARCHAR(100) NOT NULL,
+    logo_url VARCHAR(255),
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Products table
+CREATE TABLE products (
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
+    stock INT NOT NULL DEFAULT 0 CHECK (stock >= 0),
+    category_id INT,
+    image_url VARCHAR(255),
+    public_id VARCHAR(255),
+    featured BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE SET NULL
+);
+
+-- Users table
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('user', 'admin', 'superuser') DEFAULT 'user',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Motorcycle Specifications table
+CREATE TABLE motorcycle_specs (
+    spec_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    brand_id INT,
+    model_year INT NOT NULL CHECK (model_year >= 1900),
+    engine_type VARCHAR(100),
+    engine_displacement INT CHECK (engine_displacement >= 0),
+    horsepower INT CHECK (horsepower >= 0),
+    torque VARCHAR(50),
+    transmission_type VARCHAR(50),
+    gear_count INT CHECK (gear_count >= 0),
+    fuel_capacity DECIMAL(5,2) CHECK (fuel_capacity >= 0),
+    fuel_economy VARCHAR(50),
+    seat_height INT CHECK (seat_height >= 0),
+    weight DECIMAL(8,2) CHECK (weight >= 0),
+    vin CHAR(17),
+    mileage INT CHECK (mileage >= 0),
+    `condition` ENUM('New', 'Used', 'Certified Pre-Owned') DEFAULT 'New',
+    color VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    FOREIGN KEY (brand_id) REFERENCES motorcycle_brands(brand_id) ON DELETE SET NULL
+);
+
+-- Additional Images table
+CREATE TABLE product_images (
+    image_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    image_order INT DEFAULT 0 CHECK (image_order >= 0),
+    is_primary BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+);
+
+-- Cart table
+CREATE TABLE cart (
+    cart_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1 CHECK (quantity >= 1),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    UNIQUE KEY (user_id, product_id)
+);
+
+-- Orders table
+CREATE TABLE orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL CHECK (total_amount >= 0),
+    status ENUM('pending', 'processing', 'shipped', 'delivered', 'canceled') DEFAULT 'pending',
+    shipping_address TEXT NOT NULL,
+    payment_method VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Order items table
+CREATE TABLE order_items (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL CHECK (quantity >= 1),
+    price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+);
+
+-- Trade-In Requests table
+CREATE TABLE trade_in_requests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    brand VARCHAR(100) NOT NULL,
+    model VARCHAR(100) NOT NULL,
+    year INT NOT NULL CHECK (year >= 1900),
+    mileage INT NOT NULL CHECK (mileage >= 0),
+    `condition` ENUM('Excellent', 'Good', 'Fair', 'Poor') NOT NULL,
+    description TEXT,
+    images VARCHAR(255),
+    estimated_value DECIMAL(10,2),
+    status ENUM('pending', 'evaluated', 'accepted', 'rejected') DEFAULT 'pending',
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Product Reviews table
+CREATE TABLE product_reviews (
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    user_id INT NOT NULL,
+    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    title VARCHAR(255),
+    comment TEXT,
+    verified_purchase BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Financing Options table
+CREATE TABLE financing_options (
+    option_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    interest_rate DECIMAL(5,2) NOT NULL CHECK (interest_rate >= 0),
+    min_term INT NOT NULL CHECK (min_term > 0),
+    max_term INT NOT NULL CHECK (max_term >= min_term),
+    min_downpayment_percentage DECIMAL(5,2),
+    requirements TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Product Financing table
+CREATE TABLE product_financing (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    option_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    FOREIGN KEY (option_id) REFERENCES financing_options(option_id) ON DELETE CASCADE,
+    UNIQUE KEY (product_id, option_id)
+);
+
+-- Motorcycle Features table
+CREATE TABLE motorcycle_features (
+    feature_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    feature_name VARCHAR(100) NOT NULL,
+    feature_description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+);
+
+-- Documents table
+CREATE TABLE product_documents (
+    document_id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    document_type ENUM('Title', 'Manual', 'Service History', 'Warranty', 'Other') NOT NULL,
+    document_url VARCHAR(255) NOT NULL,
+    description VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+);
+-- Insert into Categories
+INSERT INTO categories (category_name, description) VALUES
+('Sport', 'Sport motorcycles'),
+('Cruiser', 'Cruiser motorcycles'),
+('Touring', 'Touring motorcycles');
+
+-- Insert into Motorcycle Brands
+INSERT INTO motorcycle_brands (brand_name, logo_url, description) VALUES
+('Yamaha', 'yamaha_logo.png', 'Japanese motorcycle brand'),
+('Honda', 'honda_logo.png', 'Honda Motorcycles'),
+('Ducati', 'ducati_logo.png', 'Italian motorcycle brand');
+
+-- Insert into Products
+INSERT INTO products (name, description, price, stock, category_id, image_url, public_id, featured) VALUES
+('Yamaha R1', 'Superbike with 998cc engine', 20000.00, 5, 1, 'yamaha_r1.png', 'YAMR1_001', TRUE),
+('Honda Gold Wing', 'Luxury touring motorcycle', 25000.00, 3, 3, 'goldwing.png', 'HONDA_GW', FALSE),
+('Ducati Panigale V4', 'High-performance Italian superbike', 28000.00, 2, 1, 'panigale.png', 'DUCATI_PAN', TRUE);
+
+-- Insert into Users
+INSERT INTO users (name, email, password, role) VALUES
+('John Doe', 'john@example.com', 'hashedpassword1', 'user'),
+('Alice Smith', 'alice@example.com', 'hashedpassword2', 'admin');
+
+-- Insert into Motorcycle Specifications
+INSERT INTO motorcycle_specs (product_id, brand_id, model_year, engine_type, engine_displacement, horsepower, torque, transmission_type, gear_count, fuel_capacity, fuel_economy, seat_height, weight, vin, mileage, `condition`, color) VALUES
+(1, 1, 2023, 'Inline-4', 998, 200, '112 Nm', 'Manual', 6, 17.0, '40 mpg', 850, 200.5, 'YAMR12023VIN001', 0, 'New', 'Blue'),
+(2, 2, 2022, 'Flat-Six', 1833, 125, '170 Nm', 'Automatic', 7, 21.1, '35 mpg', 745, 390.0, 'HONDA2022VIN002', 12000, 'Used', 'Black');
+
+-- Insert into Product Images
+INSERT INTO product_images (product_id, image_url, image_order, is_primary) VALUES
+(1, 'yamaha_r1_1.png', 1, TRUE),
+(2, 'goldwing_1.png', 1, TRUE),
+(3, 'panigale_1.png', 1, TRUE);
+
+-- Insert into Cart
+INSERT INTO cart (user_id, product_id, quantity) VALUES
+(1, 1, 1),
+(2, 2, 2);
+
+-- Insert into Orders
+INSERT INTO orders (user_id, total_amount, status, shipping_address, payment_method) VALUES
+(1, 20000.00, 'pending', '123 Main St, NY', 'Credit Card'),
+(2, 50000.00, 'processing', '456 Elm St, CA', 'PayPal');
+
+-- Insert into Order Items
+INSERT INTO order_items (order_id, product_id, quantity, price) VALUES
+(1, 1, 1, 20000.00),
+(2, 2, 2, 25000.00);
+
+-- Insert into Trade-In Requests
+INSERT INTO trade_in_requests (user_id, brand, model, year, mileage, `condition`, description, estimated_value, status) VALUES
+(1, 'Harley-Davidson', 'Street Glide', 2018, 15000, 'Good', 'Well-maintained touring bike', 15000.00, 'pending');
+
+-- Insert into Product Reviews
+INSERT INTO product_reviews (product_id, user_id, rating, title, comment, verified_purchase) VALUES
+(1, 1, 5, 'Amazing Bike!', 'This is the best sportbike I have ever ridden!', TRUE),
+(2, 2, 4, 'Comfortable Ride', 'The Gold Wing is very comfortable for long trips.', TRUE);
+
+-- Insert into Financing Options
+INSERT INTO financing_options (name, description, interest_rate, min_term, max_term, min_downpayment_percentage, requirements) VALUES
+('Standard Plan', 'Basic financing plan', 5.5, 12, 60, 10.0, 'Good credit score required'),
+('Premium Plan', 'Lower interest with longer tenure', 3.9, 24, 72, 15.0, 'Excellent credit score required');
+
+-- Insert into Product Financing
+INSERT INTO product_financing (product_id, option_id) VALUES
+(1, 1),
+(2, 2);
+
+-- Insert into Motorcycle Features
+INSERT INTO motorcycle_features (product_id, feature_name, feature_description) VALUES
+(1, 'Quickshifter', 'Allows seamless gear shifts without using the clutch'),
+(2, 'Heated Seats', 'Provides warmth during cold rides');
+
+-- Insert into Product Documents
+INSERT INTO product_documents (product_id, document_type, document_url, description) VALUES
+(1, 'Manual', 'yamaha_r1_manual.pdf', 'Owner\'s manual for Yamaha R1'),
+(2, 'Warranty', 'goldwing_warranty.pdf', 'Warranty details for Honda Gold Wing');

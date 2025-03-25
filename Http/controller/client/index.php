@@ -4,15 +4,17 @@ use Core\App;
 use Core\Database;
 use Core\Services\ImageUploadService;
 use Http\controller\dashboard\products\ProductsController;
+//use Http\controller\dashboard\products\ProductsController;
+
 
 $db = App::resolve(Database::class);
 $cloudinary = App::resolve(ImageUploadService::class);
 $controller = new ProductsController($db, $cloudinary);
-
+$productsController = new ProductsController();
 
 $uri = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
 
-if ($uri === '/' && $method === 'GET') {
-    $controller->filterproduct('client');
+if ($uri === '/products' && $method === 'GET') {
+    $controller->index('client');
 }

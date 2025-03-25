@@ -55,7 +55,7 @@ class Router
                 if ($dynamicRouteAddcart) {
                     $_GET['id'] = $matchesAddcart[1];
                 }
-                return require base_path('Http/controller/' . $route['controller']);
+                return require base_path('Http/controller/' . ltrim($route['controller'], '/'));
             }
         }
 
