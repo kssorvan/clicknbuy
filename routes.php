@@ -95,3 +95,15 @@ $router->get('/order/confirmation/{id}', 'client/order/confirmation.php')->only(
 
 // Webhook routes
 $router->post('/webhooks/stripe', 'webhooks/stripe.php');
+
+// Add these to your routes.php
+$router->get('/payment/aba-payway', 'client/payment/aba-payway.php')->only('auth');
+$router->get('/payment/callback', 'client/payment/callback.php');
+$router->get('/order/confirmation/{id}', 'client/order/confirmation.php')->only('auth');
+
+// Add these to your routes.php
+$router->get('/payment/paypal', 'client/payment/paypal.php')->only('auth');
+$router->get('/payment/paypal-success', 'client/payment/paypal-success.php')->only('auth');
+$router->get('/payment/paypal-cancel', 'client/payment/paypal-cancel.php')->only('auth');
+
+$router->get('/cart/checkout', 'client/cart/checkout.php')->only('auth');
