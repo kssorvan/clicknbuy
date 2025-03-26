@@ -107,3 +107,7 @@ $router->get('/payment/paypal-success', 'client/payment/paypal-success.php')->on
 $router->get('/payment/paypal-cancel', 'client/payment/paypal-cancel.php')->only('auth');
 
 $router->get('/cart/checkout', 'client/cart/checkout.php')->only('auth');
+// Add this to your routes.php
+$router->post('/dashboard/orders/mark-paid', 'dashboard/orders/mark-paid.php')->only('superuser');
+// Add this to your routes.php
+$router->get('/payment/cod', 'client/payment/cod.php')->only('auth');
