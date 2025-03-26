@@ -18,35 +18,36 @@ class MotorcycleFeature
     {
         return $this->db->query("
             SELECT * FROM motorcycle_features 
-            WHERE product_id = ?
+            WHERE product_id = :product_id
             ORDER BY feature_name
-        ", [$productId])->get();
+        ", ['product_id' => $productId])->get();
     }
 
     public function create($data)
     {
         $this->db->query("
             INSERT INTO motorcycle_features (product_id, feature_name, feature_description)
-            VALUES (?, ?, ?)
+            VALUES (:product_id, :feature_name, :feature_description)
         ", [
-            $data['product_id'],
-            $data['feature_name'],
-            $data['feature_description'] ?? null
+            'product_id' => $data['product_id'],
+            'feature_name' => $data['feature_name'],
+            'feature_description' => $data['feature_description'] ?? null
         ]);
 
-        return $this->db->conncetion->lastInsertId();
+        return $this->db->connection->lastInsertId(); 
     }
 
     public function bulkCreate($productId, $features)
     {
-        // Start transaction
-        $this->db->conncetion->beginTransaction();
+        
+        $this->db->connection->beginTransaction(); 
 
         try {
-            // Delete existing features
-            $this->db->query("DELETE FROM motorcycle_features WHERE product_id = ?", [$productId]);
+          
+            $this->db->query("DELETE FROM motorcycle_features WHERE product_id = :product_id", 
+                ['product_id' => $productId]);
             
-            // Insert new features
+            
             foreach ($features as $feature) {
                 $this->create([
                     'product_id' => $productId,
@@ -55,12 +56,12 @@ class MotorcycleFeature
                 ]);
             }
             
-            // Commit transaction
-            $this->db->conncetion->commit();
+           
+            $this->db->connection->commit(); 
             return true;
         } catch (\Exception $e) {
-            // Rollback on error
-            $this->db->conncetion->rollBack();
+            
+            $this->db->connection->rollBack(); 
             throw $e;
         }
     }

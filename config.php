@@ -2,11 +2,11 @@
 
 return [
     'database' => [
-        'host'     => 'localhost',
-        'port'     => 3306,
-        'database' => 'clicknbuy', 
-        'username' => 'root',
-        'password' => '',
+        'host'     => getenv('DB_HOST') ?: 'localhost',
+        'port'     => getenv('DB_PORT') ?: 3306,
+        'database' => getenv('DB_NAME') ?: 'clicknbuy',
+        'username' => getenv('DB_USER') ?: 'root',
+        'password' => getenv('DB_PASS') ?: '',
         'charset'  => 'utf8mb4',
     ],
     'cloudinary' => [

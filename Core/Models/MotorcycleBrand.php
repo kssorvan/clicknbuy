@@ -24,38 +24,38 @@ class MotorcycleBrand
     public function find($id)
     {
         return $this->db->query("
-            SELECT * FROM motorcycle_brands WHERE brand_id = ?
-        ", [$id])->find();
+            SELECT * FROM motorcycle_brands WHERE brand_id = :brand_id
+        ", ['brand_id' => $id])->find();
     }
 
     public function create($data)
     {
         $this->db->query("
             INSERT INTO motorcycle_brands (brand_name, logo_url, description)
-            VALUES (?, ?, ?)
+            VALUES (:brand_name, :logo_url, :description)
         ", [
-            $data['brand_name'],
-            $data['logo_url'] ?? null,
-            $data['description'] ?? null
+            'brand_name' => $data['brand_name'],
+            'logo_url' => $data['logo_url'] ?? null,
+            'description' => $data['description'] ?? null
         ]);
 
-        return $this->db->conncetion->lastInsertId();
+        return $this->db->connection->lastInsertId(); // Fixed typo: conncetion → connection
     }
 
     public function update($id, $data)
     {
         $this->db->query("
             UPDATE motorcycle_brands SET
-                brand_name = ?,
-                logo_url = ?,
-                description = ?,
+                brand_name = :brand_name,
+                logo_url = :logo_url,
+                description = :description,
                 updated_at = CURRENT_TIMESTAMP
-            WHERE brand_id = ?
+            WHERE brand_id = :brand_id
         ", [
-            $data['brand_name'],
-            $data['logo_url'] ?? null,
-            $data['description'] ?? null,
-            $id
+            'brand_name' => $data['brand_name'],
+            'logo_url' => $data['logo_url'] ?? null,
+            'description' => $data['description'] ?? null,
+            'brand_id' => $id
         ]);
     }
 }

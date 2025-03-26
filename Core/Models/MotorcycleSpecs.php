@@ -20,8 +20,8 @@ class MotorcycleSpecs
             SELECT ms.*, mb.brand_name, mb.logo_url 
             FROM motorcycle_specs ms
             LEFT JOIN motorcycle_brands mb ON ms.brand_id = mb.brand_id
-            WHERE ms.product_id = ?
-        ", [$productId])->find();
+            WHERE ms.product_id = :product_id
+        ", ['product_id' => $productId])->find();
     }
 
     public function create($data)
@@ -32,70 +32,75 @@ class MotorcycleSpecs
                 engine_displacement, horsepower, torque, transmission_type,
                 gear_count, fuel_capacity, fuel_economy, seat_height,
                 weight, vin, mileage, condition, color
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (
+                :product_id, :brand_id, :model_year, :engine_type, 
+                :engine_displacement, :horsepower, :torque, :transmission_type,
+                :gear_count, :fuel_capacity, :fuel_economy, :seat_height,
+                :weight, :vin, :mileage, :condition, :color
+            )
         ", [
-            $data['product_id'],
-            $data['brand_id'],
-            $data['model_year'],
-            $data['engine_type'],
-            $data['engine_displacement'],
-            $data['horsepower'],
-            $data['torque'],
-            $data['transmission_type'],
-            $data['gear_count'],
-            $data['fuel_capacity'],
-            $data['fuel_economy'],
-            $data['seat_height'],
-            $data['weight'],
-            $data['vin'] ?? null,
-            $data['mileage'] ?? 0,
-            $data['condition'],
-            $data['color']
+            'product_id' => $data['product_id'],
+            'brand_id' => $data['brand_id'],
+            'model_year' => $data['model_year'],
+            'engine_type' => $data['engine_type'],
+            'engine_displacement' => $data['engine_displacement'],
+            'horsepower' => $data['horsepower'],
+            'torque' => $data['torque'],
+            'transmission_type' => $data['transmission_type'],
+            'gear_count' => $data['gear_count'],
+            'fuel_capacity' => $data['fuel_capacity'],
+            'fuel_economy' => $data['fuel_economy'],
+            'seat_height' => $data['seat_height'],
+            'weight' => $data['weight'],
+            'vin' => $data['vin'] ?? null,
+            'mileage' => $data['mileage'] ?? 0,
+            'condition' => $data['condition'],
+            'color' => $data['color']
         ]);
 
-        return $this->db->conncetion->lastInsertId();
+        return $this->db->connection->lastInsertId(); // Fixed typo: conncetion → connection
     }
 
     public function update($specId, $data)
     {
         $this->db->query("
             UPDATE motorcycle_specs SET
-                brand_id = ?,
-                model_year = ?,
-                engine_type = ?,
-                engine_displacement = ?,
-                horsepower = ?,
-                torque = ?,
-                transmission_type = ?,
-                gear_count = ?,
-                fuel_capacity = ?,
-                fuel_economy = ?,
-                seat_height = ?,
-                weight = ?,
-                vin = ?,
-                mileage = ?,
-                condition = ?,
-                color = ?,
+                brand_id = :brand_id,
+                model_year = :model_year,
+                engine_type = :engine_type,
+                engine_displacement = :engine_displacement,
+                horsepower = :horsepower,
+                torque = :torque,
+                transmission_type = :transmission_type,
+                gear_count = :gear_count,
+                fuel_capacity = :fuel_capacity,
+                fuel_economy = :fuel_economy,
+                seat_height = :seat_height,
+                weight = :weight,
+                vin = :vin,
+                mileage = :mileage,
+                condition = :condition,
+                color = :color,
                 updated_at = CURRENT_TIMESTAMP
-            WHERE spec_id = ?
+            WHERE spec_id = :spec_id
         ", [
-            $data['brand_id'],
-            $data['model_year'],
-            $data['engine_type'],
-            $data['engine_displacement'],
-            $data['horsepower'],
-            $data['torque'],
-            $data['transmission_type'],
-            $data['gear_count'],
-            $data['fuel_capacity'],
-            $data['fuel_economy'],
-            $data['seat_height'],
-            $data['weight'],
-            $data['vin'] ?? null,
-            $data['mileage'] ?? 0,
-            $data['condition'],
-            $data['color'],
-            $specId
+            'brand_id' => $data['brand_id'],
+            'model_year' => $data['model_year'],
+            'engine_type' => $data['engine_type'],
+            'engine_displacement' => $data['engine_displacement'],
+            'horsepower' => $data['horsepower'],
+            'torque' => $data['torque'],
+            'transmission_type' => $data['transmission_type'],
+            'gear_count' => $data['gear_count'],
+            'fuel_capacity' => $data['fuel_capacity'],
+            'fuel_economy' => $data['fuel_economy'],
+            'seat_height' => $data['seat_height'],
+            'weight' => $data['weight'],
+            'vin' => $data['vin'] ?? null,
+            'mileage' => $data['mileage'] ?? 0,
+            'condition' => $data['condition'],
+            'color' => $data['color'],
+            'spec_id' => $specId
         ]);
     }
 }

@@ -42,4 +42,24 @@ class Session
         $params = session_get_cookie_params();
         setcookie('PHPSESSID', '', time() - 3600, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
     }
+    
+    // public static function generateCsrfToken() 
+    // {
+    // $token = bin2hex(random_bytes(32));
+
+    // $_SESSION['csrf_token'] = $token;
+
+    // return $token;
+
+    // }
+
+    // public static function validateCsrfToken($token) 
+    // {
+    //     return isset($_SESSION['csrf_token']) && $_SESSION['csrf_token'] === $token;
+    // }
+
+    
+    
+
 }
+

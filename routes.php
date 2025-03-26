@@ -4,11 +4,12 @@
 
 // Basic Pages
 $router->get('/', 'client/index.php');
+
 $router->get('/about', 'client/about.php');
 $router->get('/contact', 'client/contact.php');
 
 // Product Routes
-//$router->get('/products', 'client/products/index.php');
+$router->get('/products', 'client/products/index.php');
 $router->get('/product/{id}', 'client/products/show.php');
 
 // Cart Routes
@@ -86,3 +87,11 @@ $router->get('/financing-options', 'dashboard/financing/index.php')->only('super
 $router->post('/financing-options', 'dashboard/financing/store.php')->only('superuser');
 $router->post('/financing-options/update', 'dashboard/financing/update.php')->only('superuser');
 $router->post('/financing-options/delete', 'dashboard/financing/delete.php')->only('superuser');
+
+// Payment routes
+$router->get('/payment', 'client/payment/index.php')->only('auth');
+$router->post('/payment/process', 'client/payment/process.php')->only('auth');
+$router->get('/order/confirmation/{id}', 'client/order/confirmation.php')->only('auth');
+
+// Webhook routes
+$router->post('/webhooks/stripe', 'webhooks/stripe.php');

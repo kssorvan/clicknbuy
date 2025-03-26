@@ -59,7 +59,7 @@ $cartItems = $_SESSION['cart'] ?? [];
                                                 <div class="input-group">
                                                     <button type="submit" name="action" value="decrease" class="btn btn-sm btn-outline-secondary">-</button>
                                                     <input type="text" name="quantity" class="form-control text-center"
-                                                        value="<?= $item['stock'] ?>"
+                                                        value="<?= $item['quantity'] ?? $item['stock'] ?>"
                                                         style="max-width: 70px;"
                                                         onchange="this.form.action.value='manual';this.form.submit();">
                                                     <button type="submit" name="action" value="increase" class="btn btn-sm btn-outline-secondary">+</button>
