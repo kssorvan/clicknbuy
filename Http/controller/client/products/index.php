@@ -6,7 +6,7 @@ use Core\Database;
 
 $db = App::resolve(Database::class);
 
-// Get filter parameters (for future use)
+// Get filter parameters
 $category = $_GET['category'] ?? null;
 $minPrice = $_GET['price_min'] ?? null;
 $maxPrice = $_GET['price_max'] ?? null;
@@ -16,7 +16,8 @@ $sort = $_GET['sort'] ?? 'default';
 $baseQuery = "SELECT p.*, c.category_name 
               FROM products p
               LEFT JOIN categories c ON p.category_id = c.category_id
-              WHERE 1=1";
+              WHERE p.is_deleted = FALSE 
+              AND (p.promotion_expiry IS NULL OR p.promotion_expiry > NOW())";
 $params = [];
 
 if ($category) {
@@ -34,23 +35,13 @@ if ($maxPrice) {
     $params[] = $maxPrice;
 }
 
-// Fetch Featured Products
+// Fetch products for each section
 $featuredQuery = $baseQuery . " AND p.promotion_type = 'featured'";
-$featuredProducts = $db->query($featuredQuery, $params)->get();
-
-// Fetch Big Sale Products
 $bigSaleQuery = $baseQuery . " AND p.promotion_type = 'big_sale'";
-$bigSaleProducts = $db->query($bigSaleQuery, $params)->get();
-
-// Fetch Weekly Deals
 $weeklyDealQuery = $baseQuery . " AND p.promotion_type = 'weekly_deal'";
-$weeklyDealProducts = $db->query($weeklyDealQuery, $params)->get();
-
-// Fetch New Arrivals
 $newArrivalQuery = $baseQuery . " AND p.promotion_type = 'new_arrival'";
-$newArrivalProducts = $db->query($newArrivalQuery, $params)->get();
 
-// Apply sorting to all sections
+// Apply sorting
 $sortClause = "";
 switch ($sort) {
     case 'price_asc':
@@ -66,14 +57,14 @@ switch ($sort) {
         $sortClause = " ORDER BY p.product_id DESC";
 }
 
-// Append sorting to each query and re-fetch
+// Fetch products
 $featuredProducts = $db->query($featuredQuery . $sortClause, $params)->get();
 $bigSaleProducts = $db->query($bigSaleQuery . $sortClause, $params)->get();
 $weeklyDealProducts = $db->query($weeklyDealQuery . $sortClause, $params)->get();
 $newArrivalProducts = $db->query($newArrivalQuery . $sortClause, $params)->get();
 
 // Get categories for filter dropdown
-$categories = $db->query("SELECT * FROM categories ORDER BY category_name")->get();
+$categories = $db->query("SELECT * FROM categories WHERE is_deleted = FALSE ORDER BY category_name")->get();
 
 view("client/products/index.view.php", [
     'featuredProducts' => $featuredProducts,

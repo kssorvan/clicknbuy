@@ -43,4 +43,11 @@ class Database
         }
         return $result;
     }
+    public function getActiveProducts($query, $params = []) {
+        // Append conditions for active products
+        $query .= " AND is_deleted = FALSE AND (promotion_expiry IS NULL OR promotion_expiry > NOW())";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
 }

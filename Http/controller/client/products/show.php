@@ -1,6 +1,5 @@
-// Http/controller/client/products/show.php
 <?php
-
+// Http/controller/client/products/show.php
 use Core\App;
 use Core\Database;
 
@@ -18,7 +17,7 @@ $product = $db->query("
     SELECT p.*, c.category_name
     FROM products p
     LEFT JOIN categories c ON p.category_id = c.category_id
-    WHERE p.product_id = ?
+    WHERE p.product_id = ? AND p.is_deleted = FALSE
 ", [$id])->find();
 
 if (!$product) {
@@ -44,7 +43,7 @@ $relatedProducts = $db->query("
     SELECT p.*, c.category_name
     FROM products p
     LEFT JOIN categories c ON p.category_id = c.category_id
-    WHERE p.category_id = ? AND p.product_id != ?
+    WHERE p.category_id = ? AND p.product_id != ? AND p.is_deleted = FALSE
     LIMIT 4
 ", [$product['category_id'], $id])->get();
 

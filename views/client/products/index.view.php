@@ -1,4 +1,4 @@
-<!-- client/products/index.view.php -->
+<!-- views/client/products/index.view.php -->
 <?php include base_path('views/client/partials/head.php') ?>
 <?php include base_path('views/client/partials/nav.php') ?>
 
@@ -39,8 +39,8 @@
                             <div class="icon">
                                 <img src="<?= $product['image_url'] ?>" class="img-fluid product-grid" alt="">
                             </div>
-                            <h3><?= $product['name'] ?></h3>
-                            <p>$ <?= $product['price'] ?></p>
+                            <h3><?= htmlspecialchars($product['name']) ?></h3>
+                            <p>$ <?= number_format($product['price'], 2) ?></p>
                             <div class="buttons">
                                 <a href="/product/<?= $product['product_id'] ?>" class="button3">
                                     Read More <i class="bi bi-arrow-right"></i>
@@ -74,8 +74,13 @@
                             <div class="icon">
                                 <img src="<?= $product['image_url'] ?>" class="img-fluid product-grid" alt="">
                             </div>
-                            <h3><?= $product['name'] ?></h3>
-                            <p>$ <?= $product['price'] ?></p>
+                            <h3><?= htmlspecialchars($product['name']) ?></h3>
+                            <p>
+                                $ <?= number_format($product['price'], 2) ?>
+                                <?php if ($product['original_price']): ?>
+                                    <span style="text-decoration: line-through; color: #828282;">$ <?= number_format($product['original_price'], 2) ?></span>
+                                <?php endif; ?>
+                            </p>
                             <div class="buttons">
                                 <a href="/product/<?= $product['product_id'] ?>" class="button3">
                                     Read More <i class="bi bi-arrow-right"></i>
@@ -95,7 +100,10 @@
         <div class="row">
             <p class="text-center" style="font-size: 0.9rem; color: #828282;">This Week's Specials</p>
             <h2 class="text-center" style="font-size: 3.3rem; font-weight: 700;">Weekly Deals</h2>
-            <p class="text-center" style="font-size: 1.1rem; color: #828282; letter-spacing: 3px;">Check out our best deals of the week.</p>
+            <p class="text-center" style="font-size: 1.1rem; color: #828282; letter-spacing: 3px;">
+                Check out our best deals of the week. 
+                <span id="weekly-deal-timer"></span>
+            </p>
         </div>
         <div class="row mt-5">
             <?php if (empty($weeklyDealProducts)): ?>
@@ -109,8 +117,8 @@
                             <div class="icon">
                                 <img src="<?= $product['image_url'] ?>" class="img-fluid product-grid" alt="">
                             </div>
-                            <h3><?= $product['name'] ?></h3>
-                            <p>$ <?= $product['price'] ?></p>
+                            <h3><?= htmlspecialchars($product['name']) ?></h3>
+                            <p>$ <?= number_format($product['price'], 2) ?></p>
                             <div class="buttons">
                                 <a href="/product/<?= $product['product_id'] ?>" class="button3">
                                     Read More <i class="bi bi-arrow-right"></i>
@@ -144,8 +152,8 @@
                             <div class="icon">
                                 <img src="<?= $product['image_url'] ?>" class="img-fluid product-grid" alt="">
                             </div>
-                            <h3><?= $product['name'] ?></h3>
-                            <p>$ <?= $product['price'] ?></p>
+                            <h3><?= htmlspecialchars($product['name']) ?></h3>
+                            <p>$ <?= number_format($product['price'], 2) ?></p>
                             <div class="buttons">
                                 <a href="/product/<?= $product['product_id'] ?>" class="button3">
                                     Read More <i class="bi bi-arrow-right"></i>
@@ -161,3 +169,31 @@
 
 <?php require base_path('views/client/partials/newsletter.php') ?>
 <?php require base_path('views/client/partials/footer.php') ?>
+
+<script>
+// JavaScript for Weekly Deals countdown timer
+document.addEventListener('DOMContentLoaded', function() {
+    const endDate = new Date('2025-04-04T23:59:59');
+    const timerElement = document.getElementById('weekly-deal-timer');
+
+    function updateTimer() {
+        const now = new Date();
+        const timeLeft = endDate - now;
+
+        if (timeLeft <= 0) {
+            timerElement.innerHTML = 'Deal has ended!';
+            return;
+        }
+
+        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        timerElement.innerHTML = `Ends in ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    updateTimer();
+    setInterval(updateTimer, 1000);
+});
+</script>
