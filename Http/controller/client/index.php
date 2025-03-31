@@ -1,16 +1,13 @@
 <?php
+// Http/controller/client/index.php
 
 use Core\App;
 use Core\Database;
-use Core\Services\ImageUploadService;
-use Http\controller\dashboard\products\ProductsController;
 
-// Set up database and services first
+// Set up database
 $db = App::resolve(Database::class);
-$cloudinary = App::resolve(ImageUploadService::class);
-$controller = new ProductsController($db, $cloudinary);
 
-// Fetch featured products from the database
+// Fetch featured products for the homepage
 $products = $db->query("
     SELECT p.*, c.category_name
     FROM products p
@@ -18,15 +15,7 @@ $products = $db->query("
     LIMIT 12
 ")->get();
 
-// Now render the view with the products data
+// Render the homepage
 view("client/index.view.php", [
     'products' => $products
 ]);
-
-// Handle other routes 
-$uri = $_SERVER['REQUEST_URI'];
-$method = $_SERVER['REQUEST_METHOD'];
-
-if ($uri === '/products' && $method === 'GET') {
-    $controller->index('client');
-}

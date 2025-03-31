@@ -8,7 +8,7 @@ use Core\App;
 $db = App::resolve('Core\Database');
 
 // Get the product ID from the URL
-$productId = isset($params['id']) ? (int)$params['id'] : null;
+$productId = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
 if (!$productId) {
     $_SESSION['error'] = 'Invalid product ID.';
@@ -84,7 +84,11 @@ if (isset($_SESSION['user'])) {
     if (!$found) {
         $_SESSION['cart'][] = [
             'id' => $productId,
-            'quantity' => $quantity
+            'quantity' => $quantity,
+            'name' => $product['name'],
+            'price' => $product['price'],
+            'image' => $product['image_url'],
+            'stock' => $product['stock'] // Include stock info for validation
         ];
     }
 }

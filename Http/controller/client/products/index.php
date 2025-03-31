@@ -1,9 +1,10 @@
 <?php
-
 // Http/controller/client/products/index.php
+
 use Core\App;
 use Core\Database;
 
+// Set up database
 $db = App::resolve(Database::class);
 
 // Get filter parameters

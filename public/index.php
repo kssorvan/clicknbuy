@@ -1,4 +1,7 @@
+
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 use Core\App;
 use Core\Router;
 
@@ -45,10 +48,19 @@ $fileExtension = pathinfo($uri, PATHINFO_EXTENSION);
 if (in_array($fileExtension, $staticFileExtensions)) {
     return false; // Let the web server handle static files
 }
-
 // Set up routing
 $router = new Router();
 $routes = require base_path('routes.php');
-$method = $_POST['_method'] ?? $_SERVER['REQUEST_METHOD'];
 
+// Register all the routes
+foreach ($routes as $route) {
+    $router->add($route['method'], $route['uri'], $route['controller']);
+    
+    // Apply middleware if it exists
+    if (!empty($route['middleware'])) {
+        $router->only($route['middleware']);
+    }
+}
+
+$method = $_POST['_method'] ?? $_SERVER['REQUEST_METHOD'];
 $router->route($uri, $method);

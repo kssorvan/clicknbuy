@@ -75,4 +75,9 @@ return [
     // Webhook Routes
     ['uri' => '/webhooks/stripe', 'controller' => 'webhooks/stripe.php', 'method' => 'POST', 'middleware' => [], 'name' => 'webhooks.stripe'],
     ['uri' => '/dashboard-test', 'controller' => 'dashboard/index.php', 'method' => 'GET', 'middleware' => [], 'name' => 'dashboard.test'],
+    // In routes.php
+// Make sure these routes are defined:
+
+['uri' => '/', 'controller' => 'client/index.php', 'method' => 'GET', 'middleware' => [], 'name' => 'home'],
+['uri' => '/products', 'controller' => 'client/products/index.php', 'method' => 'GET', 'middleware' => [], 'name' => 'products.index'],
 ];
