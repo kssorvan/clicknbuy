@@ -5,7 +5,18 @@
     <div id="content">
 
         <!-- Topbar -->
-        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+        <nav class="navbar navbar-expand navbar-light bg-light topbar mb-4 static-top shadow">
+            <div class="container-fluid">
+                <h5 class="m-0">Welcome, <?= htmlspecialchars($_SESSION['user']['name']) ?>! (<?= htmlspecialchars($_SESSION['user']['role']) ?>)</h5>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                    <a class="nav-link text-white <?= $_SERVER['REQUEST_URI'] === '/dashboard' ? 'bg-secondary' : '' ?>" href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <form action="/logout" method="POST" class="d-inline">
+                            <button type="submit" class="nav-link btn btn-link">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
 
             <!-- Sidebar Toggle (Topbar) -->
             <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">

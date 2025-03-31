@@ -145,4 +145,34 @@ public function route($uri, $method)
         return require base_path("views/client/{$code}.php");
         die();
     }
+//     public function dispatch($uri, $method)
+// {
+//     // Normalize URI by removing trailing slash
+//     $uri = rtrim($uri, '/');
+//     error_log("Requested URI: {$uri}, Method: {$method}");
+//     foreach ($this->routes as $route) {
+//         $routeUri = rtrim($route['uri'], '/');
+//         error_log("Checking route: {$routeUri}, Method: {$route['method']}");
+//         if ($routeUri === $uri && $route['method'] === $method) {
+//             foreach ($route['middleware'] as $middleware) {
+//                 $middlewareClass = "Core\\Middleware\\" . ucfirst($middleware);
+//                 (new $middlewareClass)->handle();
+//             }
+//             $controllerPath = __DIR__ . "/../Http/controllers/{$route['controller']}";
+//             if (file_exists($controllerPath)) {
+//                 require $controllerPath;
+//             } else {
+//                 error_log("Controller not found: {$controllerPath}");
+//                 http_response_code(404);
+//                 view('errors/404.view.php');
+//                 exit();
+//             }
+//             return;
+//         }
+//     }
+//     error_log("No route matched for URI: {$uri}");
+//     http_response_code(404);
+//     view('errors/404.view.php');
+//     exit();
+// }
 }

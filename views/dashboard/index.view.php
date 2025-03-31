@@ -1,6 +1,6 @@
-<?php require 'partials/head.php' ?>
-<?php require 'partials/sidebar.php' ?>
-<?php require 'partials/nav.php' ?>
+<?php require base_path('views/dashboard/partials/head.php') ?>
+<?php require base_path('views/dashboard/partials/sidebar.php') ?>
+<?php require base_path('views/dashboard/partials/nav.php') ?>
 
 <!-- Content Row -->
 <div class="row">
@@ -13,7 +13,7 @@
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                             Earnings (Monthly)</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$<?= number_format($monthlyEarnings, 2) ?></div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -31,7 +31,7 @@
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                             Earnings (Annual)</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$<?= number_format($annualEarnings, 2) ?></div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -47,15 +47,15 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Test Ride Completion
                         </div>
                         <div class="row no-gutters align-items-center">
                             <div class="col-auto">
-                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?= $taskProgress ?>%</div>
                             </div>
                             <div class="col">
                                 <div class="progress progress-sm mr-2">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: <?= $taskProgress ?>%" aria-valuenow="<?= $taskProgress ?>" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                             </div>
                         </div>
@@ -75,8 +75,8 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Pending Requests</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                            Pending Test Rides</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800"><?= $pendingRequests ?></div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-comments fa-2x text-gray-300"></i>
@@ -144,13 +144,13 @@
                 </div>
                 <div class="mt-4 text-center small">
                     <span class="mr-2">
-                        <i class="fas fa-circle text-primary"></i> Direct
+                        <i class="fas fa-circle text-primary"></i> Credit Card
                     </span>
                     <span class="mr-2">
-                        <i class="fas fa-circle text-success"></i> Social
+                        <i class="fas fa-circle text-success"></i> Cash on Delivery
                     </span>
                     <span class="mr-2">
-                        <i class="fas fa-circle text-info"></i> Referral
+                        <i class="fas fa-circle text-info"></i> Bank Transfer
                     </span>
                 </div>
             </div>
@@ -179,24 +179,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>#12345</td>
-                                <td>John Doe</td>
-                                <td>$1,200.00</td>
-                                <td><span class="badge badge-success">Completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>#12346</td>
-                                <td>Jane Smith</td>
-                                <td>$3,400.00</td>
-                                <td><span class="badge badge-warning">Processing</span></td>
-                            </tr>
-                            <tr>
-                                <td>#12347</td>
-                                <td>Robert Johnson</td>
-                                <td>$890.00</td>
-                                <td><span class="badge badge-info">Shipped</span></td>
-                            </tr>
+                            <?php foreach ($recentOrders as $order): ?>
+                                <tr>
+                                    <td>#<?= $order['order_id'] ?></td>
+                                    <td><?= htmlspecialchars($order['customer']) ?></td>
+                                    <td>$<?= number_format($order['total_amount'], 2) ?></td>
+                                    <td>
+                                        <span class="badge badge-<?php
+                                            echo $order['status'] === 'delivered' ? 'success' :
+                                                ($order['status'] === 'processing' ? 'warning' :
+                                                ($order['status'] === 'shipped' ? 'info' :
+                                                ($order['status'] === 'canceled' ? 'danger' : 'secondary')));
+                                        ?>">
+                                            <?= ucfirst($order['status']) ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
@@ -222,24 +221,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Michael Brown</td>
-                                <td>Honda CBR650R</td>
-                                <td>Mar 28, 2023</td>
-                                <td><span class="badge badge-success">Confirmed</span></td>
-                            </tr>
-                            <tr>
-                                <td>Sarah Wilson</td>
-                                <td>Yamaha MT-09</td>
-                                <td>Mar 30, 2023</td>
-                                <td><span class="badge badge-warning">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>David Lee</td>
-                                <td>Kawasaki Ninja 650</td>
-                                <td>Apr 2, 2023</td>
-                                <td><span class="badge badge-danger">Cancelled</span></td>
-                            </tr>
+                            <?php foreach ($recentTestRides as $testRide): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($testRide['customer']) ?></td>
+                                    <td><?= htmlspecialchars($testRide['model']) ?></td>
+                                    <td><?= (new DateTime($testRide['requested_date']))->format('M d, Y') ?></td>
+                                    <td>
+                                        <span class="badge badge-<?php
+                                            echo $testRide['status'] === 'completed' ? 'success' :
+                                                ($testRide['status'] === 'pending' ? 'warning' :
+                                                ($testRide['status'] === 'canceled' ? 'danger' : 'info'));
+                                        ?>">
+                                            <?= ucfirst($testRide['status']) ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
@@ -247,5 +244,66 @@
         </div>
     </div>
 </div>
+
+<!-- Chart.js Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Area Chart (Earnings Overview)
+const ctxArea = document.getElementById('myAreaChart').getContext('2d');
+new Chart(ctxArea, {
+    type: 'line',
+    data: {
+        labels: <?= $earningsLabels ?>,
+        datasets: [{
+            label: 'Earnings',
+            data: <?= $earningsData ?>,
+            borderColor: 'rgba(78, 115, 223, 1)',
+            backgroundColor: 'rgba(78, 115, 223, 0.05)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Earnings ($)'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Month'
+                }
+            }
+        }
+    }
+});
+
+// Pie Chart (Revenue Sources)
+const ctxPie = document.getElementById('myPieChart').getContext('2d');
+new Chart(ctxPie, {
+    type: 'pie',
+    data: {
+        labels: <?= $revenueLabels ?>,
+        datasets: [{
+            data: <?= $revenueData ?>,
+            backgroundColor: [
+                'rgba(78, 115, 223, 1)',  // Credit Card
+                'rgba(28, 200, 138, 1)',  // Cash on Delivery
+                'rgba(54, 185, 204, 1)'   // Bank Transfer
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+</script>
 
 <?php require base_path('views/dashboard/partials/footer.php') ?>

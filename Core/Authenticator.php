@@ -1,49 +1,48 @@
 <?php
-
 namespace Core;
 
 class Authenticator
 {
-    // public function attempt($email, $password)
-    // {
+    public function attempt($email, $password)
+    {
+        $db = App::resolve(Database::class);
 
-    //     $user = (App::resolve(Database::class))->query('SELECT * FROM users WHERE email = :email', ['email' => $email])->find();
+        $user = $db->query(
+            'SELECT * FROM users WHERE email = ? AND is_deleted = FALSE',
+            [$email]
+        )->find();
 
-    //     if ($user) {
-    //         dd($user['roles_id']);
-    //         if (password_verify($password, $user['password'])) {
+        if ($user && password_verify($password, $user['password'])) {
+            $this->login([
+                'user_id' => $user['user_id'],
+                'email' => $user['email'],
+                'name' => $user['name'],
+                'profile_image_url' => $user['profile_image_url'],
+                'role' => $user['role']
+            ]);
+            return true;
+        }
 
-    //             $this->login([
-    //                 'id' => $user['id'],
-    //                 'email' => $email,
-    //                 'name' => $user['name'],
-    //                 'image_url' => $user['image_url'],
-    //                 'role' => $user['roles_id'] === 1 ? 'admin' : 'customer'
-
-    //             ]);
-    //             return true;
-    //         }
-    //     }
-
-    //     return false;
-    // }
-
+        return false;
+    }
 
     public function login($user)
     {
         $_SESSION['user'] = [
-            'id'=> $user['id'],
+            'user_id' => $user['user_id'],
             'email' => $user['email'],
             'name' => $user['name'],
-            'image_path' => $user['image_url'],
+            'profile_image_url' => $user['profile_image_url'],
             'role' => $user['role']
         ];
-        session_regenerate_id();
+        session_regenerate_id(true);
     }
+
     public function logout()
     {
-        //Session::destroy();
         $_SESSION['user'] = [];
+        session_regenerate_id(true);
+        // Optionally destroy the session completely
         // session_destroy();
     }
 }

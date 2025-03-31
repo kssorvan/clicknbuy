@@ -1,77 +1,94 @@
 
 <?php
 // Http/controller/client/cart/addcart.php
+session_start();
+
 use Core\App;
-use Core\Database;
 
-$id = $_GET['id'] ?? null;
-$quantity = isset($_GET['quantity']) ? max(1, (int)$_GET['quantity']) : 1;
-$returnTo = $_GET['return_to'] ?? '/product/' . $id;
+$db = App::resolve('Core\Database');
 
-if (!$id) {
-    redirect('/');
+// Get the product ID from the URL
+$productId = isset($params['id']) ? (int)$params['id'] : null;
+
+if (!$productId) {
+    $_SESSION['error'] = 'Invalid product ID.';
+    header('Location: /products');
     exit();
 }
 
-$db = App::resolve(Database::class);
-
-// Get product details
-$product = $db->query("SELECT * FROM products WHERE product_id = ?", [$id])->find();
+// Fetch the product
+$product = $db->query(
+    "SELECT * FROM products WHERE product_id = ? AND is_deleted = FALSE",
+    [$productId]
+)->find();
 
 if (!$product) {
-    $_SESSION['error'] = "Product not found.";
-    redirect('/products');
+    $_SESSION['error'] = 'Product not found.';
+    header('Location: /products');
     exit();
 }
 
-// Check stock availability
 if ($product['stock'] <= 0) {
-    $_SESSION['error'] = "Sorry, this product is out of stock.";
-    redirect($returnTo);
+    $_SESSION['error'] = 'This product is out of stock.';
+    header('Location: /products');
     exit();
 }
 
-// Initialize cart if needed
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
-}
+// Add to cart
+$quantity = 1; // Default quantity
 
-// Check if product already in cart
-$found = false;
-foreach ($_SESSION['cart'] as &$item) {
-    if ($item['id'] == $id) {
+if (isset($_SESSION['user'])) {
+    // Add to cart table for logged-in user
+    $existing = $db->query(
+        "SELECT quantity FROM cart WHERE user_id = ? AND product_id = ?",
+        [$_SESSION['user']['user_id'], $productId]
+    )->find();
+
+    if ($existing) {
         // Update quantity
-        $newQuantity = $item['quantity'] + $quantity;
-        
-        // Limit to available stock
+        $newQuantity = $existing['quantity'] + $quantity;
         if ($newQuantity > $product['stock']) {
             $newQuantity = $product['stock'];
-            $_SESSION['notice'] = "Quantity adjusted to maximum available stock.";
+            $_SESSION['notice'] = 'Quantity adjusted due to stock limit.';
         }
-        
-        $item['quantity'] = $newQuantity;
-        $found = true;
-        break;
+        $db->query(
+            "UPDATE cart SET quantity = ?, updated_at = NOW() WHERE user_id = ? AND product_id = ?",
+            [$newQuantity, $_SESSION['user']['user_id'], $productId]
+        );
+    } else {
+        // Insert new cart item
+        $db->query(
+            "INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)",
+            [$_SESSION['user']['user_id'], $productId, $quantity]
+        );
+    }
+} else {
+    // Add to session cart for guests
+    if (!isset($_SESSION['cart'])) {
+        $_SESSION['cart'] = [];
+    }
+
+    $found = false;
+    foreach ($_SESSION['cart'] as &$item) {
+        if ($item['id'] == $productId) {
+            $item['quantity'] += $quantity;
+            if ($item['quantity'] > $product['stock']) {
+                $item['quantity'] = $product['stock'];
+                $_SESSION['notice'] = 'Quantity adjusted due to stock limit.';
+            }
+            $found = true;
+            break;
+        }
+    }
+
+    if (!$found) {
+        $_SESSION['cart'][] = [
+            'id' => $productId,
+            'quantity' => $quantity
+        ];
     }
 }
 
-// If not in cart, add it
-if (!$found) {
-    // Limit quantity to available stock
-    if ($quantity > $product['stock']) {
-        $quantity = $product['stock'];
-        $_SESSION['notice'] = "Quantity adjusted to maximum available stock.";
-    }
-    
-    $_SESSION['cart'][] = [
-        'id' => $id,
-        'name' => $product['name'],
-        'price' => $product['price'],
-        'image' => $product['image_url'],
-        'quantity' => $quantity,
-        'stock' => $product['stock']
-    ];
-}
-
-$_SESSION['success'] = "Product added to your cart.";
-redirect($returnTo);
+$_SESSION['success'] = 'Product added to cart successfully.';
+header('Location: /cart');
+exit();
