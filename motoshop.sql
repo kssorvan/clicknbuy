@@ -430,3 +430,61 @@ INSERT INTO users (name, email, password, role) VALUES
 ('John Doe', 'john@example.com', '$2y$10$someHashedPassword', 'user'),
 ('Jane Smith', 'jane@example.com', '$2y$10$anotherHashedPassword', 'user'),
 ('Admin User', 'admin@example.com', '$2y$10$adminHashedPassword', 'admin');
+
+--SELECT * FROM users WHERE role = 'superuser';
+--SELECT * FROM users WHERE role = 'admin';
+--UPDATE users SET password = '$2y$10$someNewHash...' WHERE email = 'admin@example.com';
+--UPDATE users SET role = 'superuser' WHERE email = 'admin@example.com';
+--UPDATE users SET password = '$2y$10$someNewHash...' WHERE email = 'admin@example.com';
+--UPDATE users SET role = 'superuser' WHERE email = 'admin@example.com';
+--SELECT role FROM users WHERE email = 'admin@example.com';
+
+
+
+SHOW TABLES;
+DESCRIBE orders;
+DESCRIBE test_rides;
+DESCRIBE users;
+DESCRIBE products;
+
+CREATE TABLE orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    total_amount DECIMAL(10, 2),
+    status ENUM('pending', 'processing', 'shipped', 'delivered', 'canceled') DEFAULT 'pending',
+    payment_status ENUM('pending', 'paid', 'failed') DEFAULT 'pending',
+    payment_method VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE test_rides (
+    test_ride_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    product_id INT,
+    status ENUM('pending', 'completed', 'canceled') DEFAULT 'pending',
+    requested_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+
+INSERT INTO orders (user_id, total_amount, status, payment_status, payment_method, created_at, is_deleted) VALUES
+(1, 1500.00, 'delivered', 'paid', 'Credit Card', '2025-03-01 10:00:00', FALSE),
+(1, 2000.00, 'processing', 'paid', 'Cash on Delivery', '2025-03-15 12:00:00', FALSE),
+(1, 1000.00, 'shipped', 'paid', 'Bank Transfer', '2025-03-20 14:00:00', FALSE);
+
+INSERT INTO test_rides (user_id, product_id, status, requested_date, created_at) VALUES
+(1, 1, 'completed', '2025-03-01', '2025-03-01 09:00:00'),
+(1, 2, 'pending', '2025-03-15', '2025-03-15 11:00:00'),
+(1, 3, 'pending', '2025-03-20', '2025-03-20 13:00:00');
+
+ALTER TABLE orders MODIFY shipping_address VARCHAR(255) NULL;
+ALTER TABLE test_rides MODIFY requested_time TIME NULL;
+
+DESCRIBE orders;
+
+SELECT * FROM orders;
+SELECT * FROM test_rides;

@@ -388,10 +388,103 @@ SELECT * FROM cart WHERE user_id = 1;
 
 INSERT INTO products (name, price, original_price, image_url, category_id, description, stock, featured, promotion_type, promotion_expiry)
 VALUES
-('Stylish Watch', 99.99, NULL, 'asset/images/watch.jpg', 9, 'A sleek and modern wristwatch.', 50, TRUE, 'featured', NULL),
-('Leather Wallet', 49.99, NULL, 'asset/images/wallet.jpg', 9, 'A durable leather wallet.', 30, TRUE, 'featured', NULL),
-('Sunglasses', 29.99, NULL, 'asset/images/sunglasses.jpg', 9, 'Trendy sunglasses for all occasions.', 20, TRUE, 'featured', NULL),
-('Honda CBR1000RR', 15999.99, NULL, 'asset/images/honda-cbr1000rr.jpg', 1, 'A high-performance sport bike with advanced technology.', 5, TRUE, 'featured', NULL),
-('Yamaha MT-09', 9499.99, 10499.99, 'asset/images/yamaha-mt09.jpg', 1, 'A powerful sport bike with a 3-cylinder engine.', 8, FALSE, 'big_sale', NULL),
-('Harley-Davidson Fat Boy', 19999.99, NULL, 'asset/images/harley-fatboy.jpg', 2, 'A classic cruiser with a bold design.', 3, FALSE, 'weekly_deal', '2025-04-04 23:59:59'),
-('Kawasaki Ninja 400', 4999.99, NULL, 'asset/images/kawasaki-ninja400.jpg', 1, 'An entry-level sport bike for beginners.', 10, FALSE, 'new_arrival', NULL);
+('Kawasaki KLX 230', 99.99, NULL, 'asset/images/Kawasaki-KLX-230.png', 9, 'A sleek and modern wristwatch.', 50, TRUE, 'featured', NULL),
+('TW200', 4999.99, NULL, 'asset/images/TW200.png', 9, 'A durable leather wallet.', 30, TRUE, 'featured', NULL),
+('Sunglasses', 29.99, NULL, 'asset/images/product-7.jpg', 9, 'Trendy sunglasses for all occasions.', 20, TRUE, 'featured', NULL),
+('Royal-Enfield-Hunter-350 ', 15999.99, NULL, 'asset/images/hunter350hunterrightsideview.png', 1, 'A high-performance sport bike with advanced technology.', 5, TRUE, 'featured', NULL),
+('Yamaha MT-09', 9499.99, 10499.99, 'asset/images/yamaha-mt09.png', 1, 'A powerful sport bike with a 3-cylinder engine.', 8, FALSE, 'big_sale', NULL),
+('Yamaha-Tenere-700', 19999.99, NULL, 'asset/images/Yamaha-Tenere-700.png', 2, 'A classic cruiser with a bold design.', 3, FALSE, 'weekly_deal', '2025-04-04 23:59:59'),
+('Kawasaki Ninja 400', 4999.99, NULL, 'asset/images/kawasaki-ninja400.png', 1, 'An entry-level sport bike for beginners.', 10, FALSE, 'new_arrival', NULL);
+SELECT * FROM products;
+INSERT INTO categories (category_name) VALUES
+('Sport Bikes'),
+('Cruisers'),
+('Touring Bikes'),
+('Adventure Bikes'),
+('Scooters'),
+('Electric Bikes'),
+('Motorcycle Parts'),
+('Riding Gear'),
+('Accessories');
+SELECT * FROM categories;
+SELECT * FROM users WHERE email = 'admin@example.com';
+UPDATE users 
+SET password = '$2y$10$someNewHashedPassword'
+WHERE email = 'admin@example.com';
+
+UPDATE users 
+SET role = 'superuser'
+WHERE email = 'admin@example.com';
+
+SELECT * FROM users WHERE email = 'admin@example.com';
+
+INSERT INTO users (name, email, password, role) 
+VALUES 
+('Admin Test', 'admin.test@example.com', '$2y$10$someNewHashedPassword', 'admin');
+SELECT user_id, name, email, role FROM users WHERE is_deleted = FALSE;
+UPDATE users 
+SET role = 'superuser'
+WHERE email = 'admin@example.com';
+
+INSERT INTO users (name, email, password, role) VALUES 
+('John Doe', 'john@example.com', '$2y$10$someHashedPassword', 'user'),
+('Jane Smith', 'jane@example.com', '$2y$10$anotherHashedPassword', 'user'),
+('Admin User', 'admin@example.com', '$2y$10$adminHashedPassword', 'admin');
+
+--SELECT * FROM users WHERE role = 'superuser';
+--SELECT * FROM users WHERE role = 'admin';
+--UPDATE users SET password = '$2y$10$someNewHash...' WHERE email = 'admin@example.com';
+--UPDATE users SET role = 'superuser' WHERE email = 'admin@example.com';
+--UPDATE users SET password = '$2y$10$someNewHash...' WHERE email = 'admin@example.com';
+--UPDATE users SET role = 'superuser' WHERE email = 'admin@example.com';
+--SELECT role FROM users WHERE email = 'admin@example.com';
+
+
+
+SHOW TABLES;
+DESCRIBE orders;
+DESCRIBE test_rides;
+DESCRIBE users;
+DESCRIBE products;
+
+CREATE TABLE orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    total_amount DECIMAL(10, 2),
+    status ENUM('pending', 'processing', 'shipped', 'delivered', 'canceled') DEFAULT 'pending',
+    payment_status ENUM('pending', 'paid', 'failed') DEFAULT 'pending',
+    payment_method VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE test_rides (
+    test_ride_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    product_id INT,
+    status ENUM('pending', 'completed', 'canceled') DEFAULT 'pending',
+    requested_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+
+INSERT INTO orders (user_id, total_amount, status, payment_status, payment_method, created_at, is_deleted) VALUES
+(1, 1500.00, 'delivered', 'paid', 'Credit Card', '2025-03-01 10:00:00', FALSE),
+(1, 2000.00, 'processing', 'paid', 'Cash on Delivery', '2025-03-15 12:00:00', FALSE),
+(1, 1000.00, 'shipped', 'paid', 'Bank Transfer', '2025-03-20 14:00:00', FALSE);
+
+INSERT INTO test_rides (user_id, product_id, status, requested_date, created_at) VALUES
+(1, 1, 'completed', '2025-03-01', '2025-03-01 09:00:00'),
+(1, 2, 'pending', '2025-03-15', '2025-03-15 11:00:00'),
+(1, 3, 'pending', '2025-03-20', '2025-03-20 13:00:00');
+
+ALTER TABLE orders MODIFY shipping_address VARCHAR(255) NULL;
+ALTER TABLE test_rides MODIFY requested_time TIME NULL;
+
+DESCRIBE orders;
+
+SELECT * FROM orders;
+SELECT * FROM test_rides;
