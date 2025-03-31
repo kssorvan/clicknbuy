@@ -40,7 +40,7 @@ $recentOrders = $db->query(
 
 // Recent Test Rides - Latest 3 test rides
 $recentTestRides = $db->query(
-    "SELECT u.name as customer, p.name as model, tr.requested_date, tr.status 
+    "SELECT u.name as customer, p.name as model, tr.requested_date, tr.requested_time, tr.status 
      FROM test_rides tr 
      JOIN users u ON tr.user_id = u.user_id 
      JOIN products p ON tr.product_id = p.product_id 

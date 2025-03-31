@@ -217,6 +217,7 @@
                                 <th>Customer</th>
                                 <th>Model</th>
                                 <th>Date</th>
+                                <th>Time</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -226,6 +227,7 @@
                                     <td><?= htmlspecialchars($testRide['customer']) ?></td>
                                     <td><?= htmlspecialchars($testRide['model']) ?></td>
                                     <td><?= (new DateTime($testRide['requested_date']))->format('M d, Y') ?></td>
+                                    <td><?= $testRide['requested_time'] ? (new DateTime($testRide['requested_time']))->format('H:i') : 'N/A' ?></td>
                                     <td>
                                         <span class="badge badge-<?php
                                             echo $testRide['status'] === 'completed' ? 'success' :

@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     // Handle GET request (display login form)
     view('client/login/index.view.php', [
-        'title' => 'Login — ClicknBuy',
+        'title' => 'Login — clicknbuy',
         'errors' => $_SESSION['errors'] ?? [],
     ]);
 

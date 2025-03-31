@@ -4,7 +4,6 @@
 use Core\App;
 use Core\Database;
 
-// Set up database
 $db = App::resolve(Database::class);
 
 // Get filter parameters
@@ -36,12 +35,6 @@ if ($maxPrice) {
     $params[] = $maxPrice;
 }
 
-// Fetch products for each section
-$featuredQuery = $baseQuery . " AND p.promotion_type = 'featured'";
-$bigSaleQuery = $baseQuery . " AND p.promotion_type = 'big_sale'";
-$weeklyDealQuery = $baseQuery . " AND p.promotion_type = 'weekly_deal'";
-$newArrivalQuery = $baseQuery . " AND p.promotion_type = 'new_arrival'";
-
 // Apply sorting
 $sortClause = "";
 switch ($sort) {
@@ -55,23 +48,22 @@ switch ($sort) {
         $sortClause = " ORDER BY p.created_at DESC";
         break;
     default:
-        $sortClause = " ORDER BY p.product_id DESC";
+        $sortClause = " ORDER BY p.name ASC";
 }
 
-// Fetch products
-$featuredProducts = $db->query($featuredQuery . $sortClause, $params)->get();
-$bigSaleProducts = $db->query($bigSaleQuery . $sortClause, $params)->get();
-$weeklyDealProducts = $db->query($weeklyDealQuery . $sortClause, $params)->get();
-$newArrivalProducts = $db->query($newArrivalQuery . $sortClause, $params)->get();
+// Fetch all products based on filters
+$products = $db->query($baseQuery . $sortClause, $params)->get();
 
-// Get categories for filter dropdown
-$categories = $db->query("SELECT * FROM categories WHERE is_deleted = FALSE ORDER BY category_name")->get();
+// Get all categories for navigation and filtering
+$categories = $db->query("SELECT c.*, COUNT(p.product_id) as product_count 
+                        FROM categories c
+                        LEFT JOIN products p ON c.category_id = p.category_id AND p.is_deleted = FALSE
+                        WHERE c.is_deleted = FALSE 
+                        GROUP BY c.category_id
+                        ORDER BY c.category_name")->get();
 
 view("client/products/index.view.php", [
-    'featuredProducts' => $featuredProducts,
-    'bigSaleProducts' => $bigSaleProducts,
-    'weeklyDealProducts' => $weeklyDealProducts,
-    'newArrivalProducts' => $newArrivalProducts,
+    'products' => $products,
     'categories' => $categories,
     'currentCategory' => $category,
     'minPrice' => $minPrice,

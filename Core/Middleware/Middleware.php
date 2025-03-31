@@ -12,15 +12,27 @@ class Middleware
 
     ];
 
-    public static function resolve($key)
+    public static function resolve($middleware)
     {
-        if (!$key) {
+        if (!$middleware) {
             return;
         }
-        $middleware = static::MAP[$key] ?? false;
-        if (!$middleware) {
-            throw new \Exception("Middleware {$key} not found");
+    
+        // If $middleware is an array, loop through each middleware
+        if (is_array($middleware)) {
+            foreach ($middleware as $m) {
+                static::resolve($m); // Recursively resolve each middleware
+            }
+            return;
         }
-        (new $middleware())->handle();
+    
+        // Handle a single middleware (string)
+        $middlewareClass = "Core\\Middleware\\" . $middleware;
+        if (!class_exists($middlewareClass)) {
+            throw new \Exception("Middleware class {$middlewareClass} does not exist.");
+        }
+    
+        $middlewareInstance = new $middlewareClass();
+        $middlewareInstance->handle();
     }
 }

@@ -1,13 +1,13 @@
 <!-- views/client/products/index.view.php -->
 <?php include base_path('views/client/partials/head.php') ?>
 <?php include base_path('views/client/partials/nav.php') ?>
-
+<!-- Cover -->
 <section class="hero" id="hero">
     <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <div class="carousel-background">
-                    <img src="asset/images/slider2.png" alt="" style="object-fit: cover;">
+                    <img src="asset/images/TW200cover.png" alt="" style="object-fit: cover;">
                     <div class="carousel-container">
                         <div class="carousel-content-container">
                             <h2>Products</h2>
@@ -18,6 +18,133 @@
         </div>
     </div>
 </section>
+<!-- Category  -->
+<section class="product-category-section my-5">
+    <div class="container">
+        <div class="row">
+            <!-- Category Sidebar -->
+            <div class="col-lg-3">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Categories</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <a href="/products" class="<?= !$currentCategory ? 'text-primary' : 'text-dark' ?>">
+                                    All Products
+                                </a>
+                            </li>
+                            <?php foreach ($categories as $cat): ?>
+                                <li class="list-group-item">
+                                    <a href="/products?category=<?= $cat['category_id'] ?>" 
+                                       class="<?= $currentCategory == $cat['category_id'] ? 'text-primary' : 'text-dark' ?>">
+                                        <?= htmlspecialchars($cat['category_name']) ?>
+                                        <span class="badge bg-secondary float-end"><?= $cat['product_count'] ?></span>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Price Filter -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Price Range</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/products" method="GET">
+                            <?php if ($currentCategory): ?>
+                                <input type="hidden" name="category" value="<?= $currentCategory ?>">
+                            <?php endif; ?>
+                            <div class="mb-3">
+                                <label for="price_min" class="form-label">Min Price</label>
+                                <input type="number" class="form-control" id="price_min" name="price_min" value="<?= $minPrice ?>">
+                            </div>
+                            <div class="mb-3">
+                                <label for="price_max" class="form-label">Max Price</label>
+                                <input type="number" class="form-control" id="price_max" name="price_max" value="<?= $maxPrice ?>">
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Apply Filter</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Products Grid -->
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0">
+                        <?php if ($currentCategory): ?>
+                            <?php 
+                            $categoryName = "All Products";
+                            foreach ($categories as $cat) {
+                                if ($cat['category_id'] == $currentCategory) {
+                                    $categoryName = $cat['category_name'];
+                                    break;
+                                }
+                            }
+                            echo htmlspecialchars($categoryName);
+                            ?>
+                        <?php else: ?>
+                            All Products
+                        <?php endif; ?>
+                    </h2>
+                    
+                    <!-- Sorting Options -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Sort By
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                            <li><a class="dropdown-item" href="?<?= http_build_query(array_merge($_GET, ['sort' => 'price_asc'])) ?>">Price: Low to High</a></li>
+                            <li><a class="dropdown-item" href="?<?= http_build_query(array_merge($_GET, ['sort' => 'price_desc'])) ?>">Price: High to Low</a></li>
+                            <li><a class="dropdown-item" href="?<?= http_build_query(array_merge($_GET, ['sort' => 'newest'])) ?>">Newest First</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Products Display -->
+                <div class="row">
+                    <?php if (empty($products)): ?>
+                        <div class="col-12 text-center py-5">
+                            <div class="empty-state">
+                                <i class="bi bi-search" style="font-size: 3rem;"></i>
+                                <h4 class="mt-3">No products found</h4>
+                                <p class="text-muted">Try adjusting your filters</p>
+                                <a href="/products" class="btn btn-outline-primary">Clear Filters</a>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($products as $product): ?>
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100">
+                                    <img src="<?= $product['image_url'] ?? 'asset/images/default-product.jpg' ?>" 
+                                         class="card-img-top" alt="<?= htmlspecialchars($product['name']) ?>"
+                                         style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><?= htmlspecialchars($product['name']) ?></h5>
+                                        <p class="card-text text-muted"><?= htmlspecialchars($product['category_name'] ?? 'Uncategorized') ?></p>
+                                        <p class="card-text fw-bold">$<?= number_format($product['price'], 2) ?></p>
+                                        <div class="d-grid gap-2">
+                                            <a href="/product/<?= $product['product_id'] ?>" class="btn btn-outline-primary">View Details</a>
+                                            <a href="/addcart/<?= $product['product_id'] ?>" class="btn btn-primary">Add to Cart</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
 
 <!-- Featured Products Section -->
 <section class="productfeature mt-5 mb-5">
