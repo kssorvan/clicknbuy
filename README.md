@@ -1,116 +1,72 @@
-🛒 ClicknBuy
-ClicknBuy is a custom-built e-commerce web application developed with PHP, designed for seamless online shopping of products and motorcycles.
-It features user authentication, shopping cart, test ride requests, and a full admin dashboard for managing products, orders, and users.
-Built on a custom MVC-like framework with a file-based router, session-based authentication, and a MySQL database.
+# 🛒 ClicknBuy
 
-📑 Table of Contents
-Features
+**ClicknBuy** is a custom-built e-commerce web application developed with **PHP**, designed for seamless online shopping of products and motorcycles.  
+It features **user authentication**, **shopping cart**, **test ride requests**, and a **full admin dashboard** for managing products, orders, and users.  
+Built on a **custom MVC-like framework** with a file-based router, **session-based authentication**, and a **MySQL database**.
 
-Technologies
+---
 
-Project Structure
+## 📑 Table of Contents
+- [Features](#-features)
+- [Technologies](#-technologies)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Usage](#-usage)
+- [Routes](#-routes)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-Installation
+---
 
-Configuration
+## ✨ Features
+- **User Authentication:** Register, login, logout, and profile management with role-based access (User, Admin, Superuser).
+- **Shopping Cart:** Add, update, remove items, and checkout; guest carts merge on login.
+- **Product Management:** Browse and manage products and motorcycles (Admin CRUD).
+- **Test Ride Requests:** Request and manage motorcycle test rides.
+- **Admin Dashboard:** View metrics, export earnings, manage users, products, and orders.
+- **Role-Based Middleware:** Restrict routes by user roles.
+- **Session-Based Cart:** Guest users can add to cart without an account.
 
-Usage
+---
 
-Routes
+## ⚙️ Technologies
+- **PHP 7.4+** – Backend logic
+- **MySQL** – Database
+- **Composer** – Dependency management (`vlucas/phpdotenv`)
+- **Bootstrap** – Frontend styling
+- **SB Admin 2** – Admin dashboard template
+- **JavaScript** – Client-side interactivity
 
-Contributing
+---
 
-License
+## 📥 Installation
 
-✨ Features
-User Authentication: Register, login, logout, and profile management with role-based access (User, Admin, Superuser).
+### Prerequisites
+- PHP >= 7.4
+- MySQL
+- Composer
+- Web server (e.g., Apache via Laragon)
+- Node.js (optional for asset compilation)
 
-Shopping Cart: Add, update, remove items, and checkout; guest carts merge on login.
+### Steps
 
-Product Management: Browse and manage products and motorcycles (Admin CRUD).
-
-Test Ride Requests: Request and manage motorcycle test rides.
-
-Admin Dashboard: View metrics, export earnings, manage users, products, and orders.
-
-Role-Based Middleware: Restrict routes by user roles.
-
-Session-Based Cart: Guest users can add to cart without an account.
-
-⚙️ Technologies
-PHP 7.4+ – Backend logic
-
-MySQL – Database
-
-Composer – Dependency management (e.g., vlucas/phpdotenv)
-
-Bootstrap – Frontend styling
-
-SB Admin 2 – Admin dashboard template
-
-JavaScript – Client-side interactivity
-
-🗂 Project Structure
-bash
-Copy
-Edit
-clicknbuy/
-├── Core/
-│   ├── App.php          # Application bootstrap
-│   ├── Authenticator.php # Authentication logic
-│   ├── Database.php     # Database connection
-│   ├── Router.php       # Routing system
-│   ├── Session.php      # Session management
-│   ├── Validator.php    # Input validation
-├── controllers/
-│   ├── client/          # Client-side controllers
-│   ├── dashboard/       # Admin dashboard controllers
-├── public/
-│   ├── asset/           # Frontend assets (includes SB Admin 2)
-│   ├── index.php        # Entry point
-├── views/
-│   ├── client/          # Client-side views
-│   ├── dashboard/       # Admin views
-│   ├── partials/        # Reusable view components
-├── helpers.php          # Helper functions
-├── routes.php           # Route definitions
-├── bootstrap.php        # Application setup
-├── .env                 # Environment variables
-├── composer.json        # Composer configuration
-├── logs/                # Error logs
-📥 Installation
-Prerequisites
-PHP >= 7.4
-
-MySQL
-
-Composer
-
-Web server (e.g., Apache via Laragon)
-
-Node.js (optional, for asset compilation)
-
-Steps
-Clone the repository:
-
-bash
-Copy
-Edit
-git clone <repository-url> clicknbuy
-cd clicknbuy
-Install dependencies:
+1. **Clone the repository:**
+   ```bash
+   git clone <https://github.com/kssorvan/clicknbuy.git> clicknbuy
+   cd clicknbuy
+2.Install dependencies:
 
 bash
 Copy
 Edit
 composer install
-Setup environment file:
+Set up environment:
 
 bash
 Copy
 Edit
 cp .env.example .env
-Edit .env with your database credentials:
+Update .env file:
 
 env
 Copy
@@ -122,76 +78,66 @@ DB_PORT=3306
 DB_DATABASE=clicknbuy
 DB_USERNAME=root
 DB_PASSWORD=
-Create the database:
+Create database:
 
-Create a MySQL database named clicknbuy.
+Create a MySQL database clicknbuy.
 
-Import SQL scripts if provided.
+Import SQL scripts if available.
 
 Configure web server:
 
-Point server to the public/ directory.
+Point web server to public/ folder.
 
 Enable mod_rewrite for clean URLs.
 
 Start application:
 
-Access via http://localhost/clicknbuy.
+Visit http://localhost/clicknbuy.
 
 ⚙️ Configuration
-Database: Managed via .env or Core/Database.php.
+Database connection: Managed via .env or Core/Database.php.
 
 Sessions: Configured in public/index.php.
 
-Logging: Errors stored in logs/error.log.
+Logging: Errors recorded at logs/error.log.
 
-Static Assets: Ensure public assets (CSS, JS) are properly linked.
+Static assets: Should be available under public/asset/.
 
 🚀 Usage
 Access
-Visit: http://localhost/clicknbuy
+Visit http://localhost/clicknbuy
 
-Default Accounts
+Default User Accounts
 
 Role	Email	Password
 Admin	admin@example.com	admin123
 Superuser	superuser@example.com	super123
 User	user@example.com	user123
-User Features
-Browse products and motorcycles.
+Key Features
+Users: Browse products, request test rides, manage cart, checkout.
 
-Add items to cart and checkout.
+Admins: Manage products, orders, categories, motorcycles, and earnings.
 
-Request test rides.
-
-Admin Features
-Dashboard with metrics.
-
-Manage products, categories, brands, motorcycles, orders, and test rides.
-
-Export earnings reports.
-
-Superuser Features
-Manage users (update/delete).
+Superusers: Manage users (update, delete).
 
 🛣 Routes
-Public Routes
-GET / — Home
+Public
+GET / — Home page
 
-GET /products — View products
+GET /products — Browse products
 
-GET /product/{id} — Product details
+GET /product/{id} — View product
 
-GET /motorcycles — View motorcycles
+GET /motorcycles — Browse motorcycles
 
-GET /motorcycle/{id} — Motorcycle details
+GET /motorcycle/{id} — View motorcycle
 
-Guest Routes
+Guests
 GET|POST /login
 
 GET|POST /registration
 
-Authenticated Routes
+Authenticated Users
 GET /profile
 
 GET /cart
@@ -202,7 +148,7 @@ POST /cart/checkout
 
 GET /test-ride/request/{id}
 
-Admin Routes
+Admin
 /dashboard
 
 /tbproducts
@@ -217,12 +163,13 @@ Admin Routes
 
 /test-rides/admin
 
-Superuser Routes
+Superuser
 /tbusers/update
 
 /tbusers/delete
 
+
+
 📜 License
 This project is licensed under the MIT License.
-See the LICENSE file for more details.
-
+See the LICENSE file for full details.
