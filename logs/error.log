@@ -1,0 +1,9 @@
+[28-Apr-2025 10:04:11 UTC] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in D:\laragon\www\clicknbuy\clicknbuy\Http\controller\client\cart\index.php on line 3
+[28-Apr-2025 10:09:35 UTC] PHP Warning:  require(D:\laragon\www\clicknbuy\clicknbuy/views/client/login/index.view.php): Failed to open stream: No such file or directory in D:\laragon\www\clicknbuy\clicknbuy\helpers.php on line 30
+[28-Apr-2025 10:09:35 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'D:\laragon\www\clicknbuy\clicknbuy/views/client/login/index.view.php' (include_path='.;D:/laragon/etc/php/pear') in D:\laragon\www\clicknbuy\clicknbuy\helpers.php:30
+Stack trace:
+#0 D:\laragon\www\clicknbuy\clicknbuy\Http\controller\client\login\index.php(111): view('client/login/in...', Array)
+#1 D:\laragon\www\clicknbuy\clicknbuy\Core\Router.php(100): require('D:\\laragon\\www\\...')
+#2 D:\laragon\www\clicknbuy\clicknbuy\public\index.php(76): Core\Router->route('/login', 'GET')
+#3 {main}
+  thrown in D:\laragon\www\clicknbuy\clicknbuy\helpers.php on line 30

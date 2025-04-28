@@ -1,38 +1,43 @@
-<?php include base_path('views/client/partials/nav.php'); ?>
+<?php require base_path('views/partials/head.php') ?>
+<?php require base_path('views/partials/nav.php') ?>
 
-<div class="container mt-5">
-    <h1>Login</h1>
-
-    <?php if (isset($errors['login'])): ?>
-        <div class="alert alert-danger">
-            <?= htmlspecialchars($errors['login']) ?>
-        </div>
-    <?php endif; ?>
-
-    <form action="<?= $router->url('login.post') ?>" method="POST">
-        <input type="hidden" name="_csrf" value="<?= \Core\Csrf::generateToken() ?>">
-
-        <div class="mb-3">
-            <label for="email-login" class="form-label">Email address</label>
-            <input type="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" id="email-login" name="email-login" value="<?= htmlspecialchars($_POST['email-login'] ?? '') ?>">
-            <?php if (isset($errors['email'])): ?>
-                <div class="invalid-feedback">
-                    <?= htmlspecialchars($errors['email']) ?>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5">
+                <div class="card-header text-center">
+                    <h3>Login</h3>
                 </div>
-            <?php endif; ?>
-        </div>
+                <div class="card-body">
+                    <?php if (isset($errors['email'])): ?>
+                        <div class="alert alert-danger"><?php echo htmlspecialchars($errors['email']); ?></div>
+                    <?php endif; ?>
 
-        <div class="mb-3">
-            <label for="password-login" class="form-label">Password</label>
-            <input type="password" class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>" id="password-login" name="password-login">
-            <?php if (isset($errors['password'])): ?>
-                <div class="invalid-feedback">
-                    <?= htmlspecialchars($errors['password']) ?>
+                    <form action="/login" method="POST">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" name="email" id="email" class="form-control" value="<?php echo htmlspecialchars($old['email'] ?? ''); ?>" required>
+                            <?php if (isset($errors['email'])): ?>
+                                <small class="text-danger"><?php echo htmlspecialchars($errors['email']); ?></small>
+                            <?php endif; ?>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" name="password" id="password" class="form-control" required>
+                            <?php if (isset($errors['password'])): ?>
+                                <small class="text-danger"><?php echo htmlspecialchars($errors['password']); ?></small>
+                            <?php endif; ?>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </form>
                 </div>
-            <?php endif; ?>
+                <div class="card-footer text-center">
+                    <p>Don't have an account? <a href="/register">Register here</a></p>
+                </div>
+					<p><a href="/forgot-password">Forgot your password?</a></p>
+            </div>
         </div>
-
-        <button type="submit" class="btn btn-primary">Login</button>
-        <a href="<?= $router->url('register') ?>" class="btn btn-link">Don't have an account? Register</a>
-    </form>
+    </div>
 </div>
+
+<?php require base_path('views/partials/footer.php') ?>

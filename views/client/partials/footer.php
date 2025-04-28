@@ -84,11 +84,13 @@
 
         </div>
     </section>
+    <div class="container text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+    <p class="mb-0">
+        © <?php echo date('Y'); ?> 
+        <a class="text-reset fw-bold" href="#">ClicknBuy.</a> All rights reserved.
+    </p>
+</div>
 
-    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-        © 2025 Copyright:
-        <a class="text-reset fw-bold" href="#">Dealer.</a>
-    </div>
 
 </footer>
 

@@ -17,7 +17,6 @@ class Validator
 
     public static function passwordComplexity($value)
     {
-        // Require at least one uppercase, one lowercase, one number, and one special character
         return preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/', $value) === 1;
     }
 

@@ -1,41 +1,53 @@
-
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
+
 use Core\App;
 use Core\Router;
 
 // Define the base path
 define('BASE_PATH', dirname(__DIR__));
 
-// Load environment variables (if using Dotenv)
-if (file_exists(BASE_PATH . '/.env')) {
-    $dotenv = \Dotenv\Dotenv::createImmutable(BASE_PATH);
-    $dotenv->load();
+// Load Composer autoloader
+require_once BASE_PATH . '/vendor/autoload.php';
+
+// Load environment variables
+try {
+    if (file_exists(BASE_PATH . '/.env')) {
+        $dotenv = \Dotenv\Dotenv::createImmutable(BASE_PATH);
+        $dotenv->load();
+    } else {
+        error_log('Warning: .env file not found in ' . BASE_PATH);
+    }
+} catch (\Exception $e) {
+    error_log('Dotenv error: ' . $e->getMessage());
+    die('Failed to load environment variables. Check logs for details.');
 }
 
-// Enable error reporting for development
+// Enable error reporting based on environment
 if (getenv('APP_ENV') === 'development') {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
 } else {
-    // In production, disable display_errors and log errors
     ini_set('display_errors', 0);
     ini_set('log_errors', 1);
-    ini_set('error_log', BASE_PATH . '/logs/error.log');
+    $logDir = BASE_PATH . '/logs';
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0755, true);
+    }
+    ini_set('error_log', $logDir . '/error.log');
 }
 
-// Include helper functions (once)
+// Include helper functions
 require_once BASE_PATH . '/helpers.php';
 
-// Load Composer autoloader and bootstrap
-require_once BASE_PATH . '/vendor/autoload.php';
+// Load bootstrap
 require_once BASE_PATH . '/bootstrap.php';
 
 // Configure session settings
-ini_set('session.cookie_httponly', 1); // Prevent JavaScript access to session cookies
-ini_set('session.use_strict_mode', 1); // Prevent session fixation
-ini_set('session.cookie_secure', 0);   // Set to 1 if using HTTPS in production
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_strict_mode', 1);
+ini_set('session.cookie_secure', getenv('APP_ENV') === 'production' ? 1 : 0);
 
 // Start the session
 session_start();
@@ -46,8 +58,14 @@ $staticFileExtensions = ['jpg', 'jpeg', 'png', 'gif', 'css', 'js', 'svg', 'webp'
 $fileExtension = pathinfo($uri, PATHINFO_EXTENSION);
 
 if (in_array($fileExtension, $staticFileExtensions)) {
-    return false; // Let the web server handle static files
+    $filePath = BASE_PATH . '/public' . $uri;
+    if (file_exists($filePath)) {
+        return false; // Let the web server handle static files
+    }
+    http_response_code(404);
+    exit;
 }
+
 // Set up routing
 $router = new Router();
 $routes = require base_path('routes.php');
@@ -55,8 +73,6 @@ $routes = require base_path('routes.php');
 // Register all the routes
 foreach ($routes as $route) {
     $router->add($route['method'], $route['uri'], $route['controller']);
-    
-    // Apply middleware if it exists
     if (!empty($route['middleware'])) {
         $router->only($route['middleware']);
     }

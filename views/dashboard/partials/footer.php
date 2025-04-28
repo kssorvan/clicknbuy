@@ -6,6 +6,17 @@
 <script src="asset/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="asset/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="asset/js/plugins/chartjs.min.js"></script>
+
+<script src="/asset/sb-admin-2/vendor/jquery/jquery.min.js"></script>
+<script src="/asset/sb-admin-2/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/asset/sb-admin-2/vendor/chart.js/Chart.min.js"></script>
+<script src="/asset/sb-admin-2/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/asset/sb-admin-2/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+
+
+
+
 <script>
     var ctx = document.getElementById("chart-bars").getContext("2d");
 

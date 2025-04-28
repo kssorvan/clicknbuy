@@ -1,29 +1,14 @@
 <?php
 
-function dd($value)
-{
-    echo '<pre>';
-    var_dump($value);
-    echo '</pre>';
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', __DIR__);
 }
 
-function abort($code = 404)
+function base_path($path = '')
 {
-    http_response_code($code);
-    require base_path("views/{$code}.php");
-    die();
+    return BASE_PATH . ($path ? '/' . $path : '');
 }
 
-function urlIs($value)
-{
-    return $_SERVER['REQUEST_URI'] === $value;
-}
-
-if (!function_exists('base_path')) {
-    function base_path($path = '') {
-        return BASE_PATH . ($path ? '/' . $path : '');
-    }
-}
 function view($path, $attributes = [])
 {
     extract($attributes);
@@ -31,14 +16,27 @@ function view($path, $attributes = [])
 }
 
 function redirect($path)
-{   
+{
     header("Location: {$path}");
     exit();
 }
 
+function urlIs($value)
+{
+    return $_SERVER['REQUEST_URI'] === $value;
+}
 
-if (!function_exists('base_path')) {
-    function base_path($path = '') {
-        return BASE_PATH . ($path ? '/' . $path : '');
-    }
+function abort($code = 404)
+{
+    http_response_code($code);
+    require base_path("views/client/{$code}.php");
+    die();
+}
+
+function dd($value)
+{
+    echo '<pre>';
+    var_dump($value);
+    echo '</pre>';
+    die();
 }

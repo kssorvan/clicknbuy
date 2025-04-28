@@ -6,10 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Motorcycle Dealership Admin Dashboard">
-    <meta name="author" content="Your Name">
-
-    <title>Dealer &mdash; Pay as You Buy</title>
+    <meta name="author" content="Your Name">   
     <link rel="icon" type="image/png" href="asset/images/logo.png" />
+    <title>ClicknBuy - Admin Dashboard</title>
 
     <!-- Custom fonts for this template-->
     <link href="asset/sb-admin-2/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">

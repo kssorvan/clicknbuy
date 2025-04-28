@@ -11,10 +11,10 @@ return [
     ['uri' => '/removecart', 'controller' => 'client/cart/remove.php', 'method' => 'POST', 'middleware' => [], 'name' => 'cart.remove'],
     ['uri' => '/updatecart', 'controller' => 'client/cart/update.php', 'method' => 'POST', 'middleware' => [], 'name' => 'cart.update'],
     ['uri' => '/cart/checkout', 'controller' => 'client/cart/checkout.php', 'method' => 'POST', 'middleware' => ['auth'], 'name' => 'cart.checkout'],
-    ['uri' => '/profile', 'controller' => 'client/profile/index.php', 'method' => 'GET', 'middleware' => [], 'name' => 'profile'],
+    ['uri' => '/profile', 'controller' => 'client/profile/index.php', 'method' => 'GET', 'middleware' => ['auth'], 'name' => 'profile'],
     ['uri' => '/register', 'controller' => 'client/registration/index.php', 'method' => 'POST', 'middleware' => ['guest'], 'name' => 'register'],
-    ['uri' => '/login', 'controller' => 'client/login/index.php', 'method' => 'POST', 'middleware' => ['guest'], 'name' => 'login.post'],
     ['uri' => '/login', 'controller' => 'client/login/index.php', 'method' => 'GET', 'middleware' => ['guest'], 'name' => 'login'],
+    ['uri' => '/login', 'controller' => 'client/login/index.php', 'method' => 'POST', 'middleware' => ['guest'], 'name' => 'login.post'],
     ['uri' => '/logout', 'controller' => 'client/login/destroy.php', 'method' => 'POST', 'middleware' => ['auth'], 'name' => 'logout'],
     ['uri' => '/motorcycles', 'controller' => 'client/motorcycles/index.php', 'method' => 'GET', 'middleware' => [], 'name' => 'motorcycles.index'],
     ['uri' => '/motorcycle/{id}', 'controller' => 'client/motorcycles/show.php', 'method' => 'GET', 'middleware' => [], 'name' => 'motorcycles.show'],
@@ -28,6 +28,8 @@ return [
 
     // Admin Interface Routes
     ['uri' => '/dashboard', 'controller' => 'dashboard/index.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.index'],
+    ['uri' => '/dashboard/export-earnings', 'controller' => 'dashboard/export-earnings.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.export-earnings'],
+    ['uri' => '/dashboard/pending-test-rides', 'controller' => 'dashboard/pending-test-rides.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.pending-test-rides'],
     ['uri' => '/tbproducts', 'controller' => 'dashboard/products/index.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.products.index'],
     ['uri' => '/tbproducts', 'controller' => 'dashboard/products/index.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.products.store'],
     ['uri' => '/tbproducts/update', 'controller' => 'dashboard/products/index.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.products.update'],
@@ -74,5 +76,4 @@ return [
 
     // Webhook Routes
     ['uri' => '/webhooks/stripe', 'controller' => 'webhooks/stripe.php', 'method' => 'POST', 'middleware' => [], 'name' => 'webhooks.stripe'],
-    ['uri' => '/dashboard-test', 'controller' => 'dashboard/index.php', 'method' => 'GET', 'middleware' => [], 'name' => 'dashboard.test'],
 ];

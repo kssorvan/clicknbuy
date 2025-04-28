@@ -7,3 +7,4 @@ $authenticator = new Authenticator();
 $authenticator->logout();
 
 redirect('/');
+//redirect('/login');

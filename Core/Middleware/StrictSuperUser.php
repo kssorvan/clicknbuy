@@ -1,17 +1,19 @@
 <?php
 namespace Core\Middleware;
 
+use Core\Session;
+
 class StrictSuperuser
 {
     public function handle()
     {
-        if (!isset($_SESSION['user'])) {
-            $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
+        if (!Session::has('user')) {
+            Session::put('redirect_after_login', $_SERVER['REQUEST_URI']);
             redirect('/login');
         }
 
-        if ($_SESSION['user']['role'] !== 'superuser') {
-            $_SESSION['error'] = 'You do not have permission to access this page.';
+        if (Session::get('user')['role'] !== 'superuser') {
+            Session::put('error', 'You do not have permission to access this page.');
             redirect('/dashboard');
         }
     }
