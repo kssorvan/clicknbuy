@@ -1,36 +1,82 @@
 <?php
-if (!defined('BASE_PATH')) {
-    define('BASE_PATH', __DIR__ . "/../");
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+use Core\App;
+use Core\Router;
+
+// Define the base path
+define('BASE_PATH', dirname(__DIR__));
+
+// Load Composer autoloader
+require_once BASE_PATH . '/vendor/autoload.php';
+
+// Load environment variables
+try {
+    if (file_exists(BASE_PATH . '/.env')) {
+        $dotenv = \Dotenv\Dotenv::createImmutable(BASE_PATH);
+        $dotenv->load();
+    } else {
+        error_log('Warning: .env file not found in ' . BASE_PATH);
+    }
+} catch (\Exception $e) {
+    error_log('Dotenv error: ' . $e->getMessage());
+    die('Failed to load environment variables. Check logs for details.');
 }
 
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../bootstrap.php';
-require_once __DIR__ . '/../helpers.php';
-// use Core\Session;
-// use Core\ValidationException;
-use Dotenv\Dotenv;
-use Core\App;
+// Enable error reporting based on environment
+if (getenv('APP_ENV') === 'development') {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+} else {
+    ini_set('display_errors', 0);
+    ini_set('log_errors', 1);
+    $logDir = BASE_PATH . '/logs';
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0755, true);
+    }
+    ini_set('error_log', $logDir . '/error.log');
+}
 
+// Include helper functions
+require_once BASE_PATH . '/helpers.php';
+
+// Load bootstrap
+require_once BASE_PATH . '/bootstrap.php';
+
+// Configure session settings
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_strict_mode', 1);
+ini_set('session.cookie_secure', getenv('APP_ENV') === 'production' ? 1 : 0);
+
+// Start the session
 session_start();
-//require BASE_PATH . '/Core/function.php';
-//require dirname(__DIR__) . '/Core/function.php';
 
-$requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$staticFileExtensions = ['jpg', 'jpeg', 'png', 'gif', 'css', 'js', 'svg', 'webp'];
-$fileExtension = pathinfo($requestUri, PATHINFO_EXTENSION);
+// Handle static file requests
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$staticFileExtensions = ['jpg', 'jpeg', 'png', 'gif', 'css', 'js', 'svg', 'webp', 'ico', 'woff', 'woff2'];
+$fileExtension = pathinfo($uri, PATHINFO_EXTENSION);
 
 if (in_array($fileExtension, $staticFileExtensions)) {
-    return false;
+    $filePath = BASE_PATH . '/public' . $uri;
+    if (file_exists($filePath)) {
+        return false; // Let the web server handle static files
+    }
+    http_response_code(404);
+    exit;
 }
 
-$router = new Core\Router();
+// Set up routing
+$router = new Router();
 $routes = require base_path('routes.php');
 
-$uri = parse_url($_SERVER['REQUEST_URI'])['path'];
+// Register all the routes
+foreach ($routes as $route) {
+    $router->add($route['method'], $route['uri'], $route['controller']);
+    if (!empty($route['middleware'])) {
+        $router->only($route['middleware']);
+    }
+}
+
 $method = $_POST['_method'] ?? $_SERVER['REQUEST_METHOD'];
-
 $router->route($uri, $method);
-
-$app = App::getContainer();
-$db = $app->resolve('Core\Database');
-echo "App running!";

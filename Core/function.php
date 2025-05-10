@@ -50,3 +50,9 @@ function redirect($path)
     header("Location: {$path}");
     exit();
 }
+
+// if (!function_exists('base_path')) {
+//     function base_path($path = '') {
+//         return BASE_PATH . ($path ? '/' . $path : '');
+//     }
+// }

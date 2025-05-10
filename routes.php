@@ -1,88 +1,79 @@
 <?php
+return [
+    // Client Interface Routes
+    ['uri' => '/', 'controller' => 'client/index.php', 'method' => 'GET', 'middleware' => [], 'name' => 'home'],
+    ['uri' => '/about', 'controller' => 'client/about.php', 'method' => 'GET', 'middleware' => [], 'name' => 'about'],
+    ['uri' => '/contact', 'controller' => 'client/contact.php', 'method' => 'GET', 'middleware' => [], 'name' => 'contact'],
+    ['uri' => '/products', 'controller' => 'client/products/index.php', 'method' => 'GET', 'middleware' => [], 'name' => 'products.index'],
+    ['uri' => '/product/{id}', 'controller' => 'client/products/show.php', 'method' => 'GET', 'middleware' => [], 'name' => 'products.show'],
+    ['uri' => '/cart', 'controller' => 'client/cart/index.php', 'method' => 'GET', 'middleware' => [], 'name' => 'cart.index'],
+    ['uri' => '/addcart/{id}', 'controller' => 'client/cart/addcart.php', 'method' => 'GET', 'middleware' => [], 'name' => 'cart.add'],
+    ['uri' => '/removecart', 'controller' => 'client/cart/remove.php', 'method' => 'POST', 'middleware' => [], 'name' => 'cart.remove'],
+    ['uri' => '/updatecart', 'controller' => 'client/cart/update.php', 'method' => 'POST', 'middleware' => [], 'name' => 'cart.update'],
+    ['uri' => '/cart/checkout', 'controller' => 'client/cart/checkout.php', 'method' => 'POST', 'middleware' => ['auth'], 'name' => 'cart.checkout'],
+    ['uri' => '/profile', 'controller' => 'client/profile/index.php', 'method' => 'GET', 'middleware' => ['auth'], 'name' => 'profile'],
+    ['uri' => '/register', 'controller' => 'client/registration/index.php', 'method' => 'POST', 'middleware' => ['guest'], 'name' => 'register'],
+    ['uri' => '/login', 'controller' => 'client/login/index.php', 'method' => 'GET', 'middleware' => ['guest'], 'name' => 'login'],
+    ['uri' => '/login', 'controller' => 'client/login/index.php', 'method' => 'POST', 'middleware' => ['guest'], 'name' => 'login.post'],
+    ['uri' => '/logout', 'controller' => 'client/login/destroy.php', 'method' => 'POST', 'middleware' => ['auth'], 'name' => 'logout'],
+    ['uri' => '/motorcycles', 'controller' => 'client/motorcycles/index.php', 'method' => 'GET', 'middleware' => [], 'name' => 'motorcycles.index'],
+    ['uri' => '/motorcycle/{id}', 'controller' => 'client/motorcycles/show.php', 'method' => 'GET', 'middleware' => [], 'name' => 'motorcycles.show'],
+    ['uri' => '/test-ride/request/{id}', 'controller' => 'client/test-rides/request.php', 'method' => 'GET', 'middleware' => ['auth'], 'name' => 'test-rides.request'],
+    ['uri' => '/test-ride/submit', 'controller' => 'client/test-rides/store.php', 'method' => 'POST', 'middleware' => ['auth'], 'name' => 'test-rides.store'],
+    ['uri' => '/financing/calculator/{id}', 'controller' => 'client/financing/calculator.php', 'method' => 'GET', 'middleware' => [], 'name' => 'financing.calculator'],
+    ['uri' => '/financing/apply', 'controller' => 'client/financing/apply.php', 'method' => 'POST', 'middleware' => ['auth'], 'name' => 'financing.apply'],
+    ['uri' => '/reviews/submit', 'controller' => 'client/reviews/store.php', 'method' => 'POST', 'middleware' => ['auth'], 'name' => 'reviews.store'],
+    ['uri' => '/trade-in', 'controller' => 'client/trade-in/index.php', 'method' => 'GET', 'middleware' => ['auth'], 'name' => 'trade-in.index'],
+    ['uri' => '/trade-in/submit', 'controller' => 'client/trade-in/store.php', 'method' => 'POST', 'middleware' => ['auth'], 'name' => 'trade-in.store'],
 
-/**** Client Interface Routes ****/
+    // Admin Interface Routes
+    ['uri' => '/dashboard', 'controller' => 'dashboard/index.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.index'],
+    ['uri' => '/dashboard/export-earnings', 'controller' => 'dashboard/export-earnings.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.export-earnings'],
+    ['uri' => '/dashboard/pending-test-rides', 'controller' => 'dashboard/pending-test-rides.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.pending-test-rides'],
+    ['uri' => '/tbproducts', 'controller' => 'dashboard/products/index.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.products.index'],
+    ['uri' => '/tbproducts', 'controller' => 'dashboard/products/index.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.products.store'],
+    ['uri' => '/tbproducts/update', 'controller' => 'dashboard/products/index.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.products.update'],
+    ['uri' => '/tbproducts/delete', 'controller' => 'dashboard/products/index.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.products.delete'],
+    ['uri' => '/tbcategories', 'controller' => 'dashboard/categories/index.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.categories.index'],
+    ['uri' => '/tbcategories', 'controller' => 'dashboard/categories/index.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.categories.store'],
+    ['uri' => '/tbcategories/update', 'controller' => 'dashboard/categories/index.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.categories.update'],
+    ['uri' => '/tbcategories/delete', 'controller' => 'dashboard/categories/index.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.categories.delete'],
+    ['uri' => '/tborders', 'controller' => 'dashboard/orders/index.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.orders.index'],
+    ['uri' => '/tborders', 'controller' => 'dashboard/orders/index.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.orders.store'],
+    ['uri' => '/tborders/update', 'controller' => 'dashboard/orders/index.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.orders.update'],
+    ['uri' => '/tborders/delete', 'controller' => 'dashboard/orders/index.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.orders.delete'],
+    ['uri' => '/dashboard/orders/mark-paid', 'controller' => 'dashboard/orders/mark-paid.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.orders.mark-paid'],
+    ['uri' => '/tbusers', 'controller' => 'dashboard/users/index.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.users.index'],
+    ['uri' => '/tbusers/update', 'controller' => 'dashboard/users/index.php', 'method' => 'POST', 'middleware' => ['strict_superuser'], 'name' => 'dashboard.users.update'],
+    ['uri' => '/tbusers/delete', 'controller' => 'dashboard/users/index.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.users.delete'],
+    ['uri' => '/motorcycles/admin', 'controller' => 'dashboard/motorcycles/index.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.motorcycles.index'],
+    ['uri' => '/motorcycles/create', 'controller' => 'dashboard/motorcycles/create.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.motorcycles.create'],
+    ['uri' => '/motorcycles', 'controller' => 'dashboard/motorcycles/store.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.motorcycles.store'],
+    ['uri' => '/motorcycles/edit/{id}', 'controller' => 'dashboard/motorcycles/edit.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.motorcycles.edit'],
+    ['uri' => '/motorcycles/update', 'controller' => 'dashboard/motorcycles/update.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.motorcycles.update'],
+    ['uri' => '/motorcycles/delete', 'controller' => 'dashboard/motorcycles/delete.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.motorcycles.delete'],
+    ['uri' => '/brands', 'controller' => 'dashboard/brands/index.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.brands.index'],
+    ['uri' => '/brands', 'controller' => 'dashboard/brands/store.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.brands.store'],
+    ['uri' => '/brands/update', 'controller' => 'dashboard/brands/update.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.brands.update'],
+    ['uri' => '/brands/delete', 'controller' => 'dashboard/brands/delete.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.brands.delete'],
+    ['uri' => '/test-rides/admin', 'controller' => 'dashboard/test-rides/index.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.test-rides.index'],
+    ['uri' => '/test-rides/update-status', 'controller' => 'dashboard/test-rides/update-status.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.test-rides.update-status'],
+    ['uri' => '/financing-options', 'controller' => 'dashboard/financing/index.php', 'method' => 'GET', 'middleware' => ['admin'], 'name' => 'dashboard.financing.index'],
+    ['uri' => '/financing-options', 'controller' => 'dashboard/financing/store.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.financing.store'],
+    ['uri' => '/financing-options/update', 'controller' => 'dashboard/financing/update.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.financing.update'],
+    ['uri' => '/financing-options/delete', 'controller' => 'dashboard/financing/delete.php', 'method' => 'POST', 'middleware' => ['admin'], 'name' => 'dashboard.financing.delete'],
 
-// Basic Pages
-$router->get('/', 'client/index.php');
-$router->get('/about', 'client/about.php');
-$router->get('/contact', 'client/contact.php');
+    // Payment Routes
+    ['uri' => '/payment', 'controller' => 'client/payment/index.php', 'method' => 'GET', 'middleware' => ['auth'], 'name' => 'payment.index'],
+    ['uri' => '/payment/process', 'controller' => 'client/payment/process.php', 'method' => 'POST', 'middleware' => ['auth'], 'name' => 'payment.process'],
+    ['uri' => '/order/confirmation/{id}', 'controller' => 'client/order/confirmation.php', 'method' => 'GET', 'middleware' => ['auth'], 'name' => 'order.confirmation'],
+    ['uri' => '/payment/aba-payway', 'controller' => 'client/payment/aba-payway.php', 'method' => 'GET', 'middleware' => ['auth'], 'name' => 'payment.aba-payway'],
+    ['uri' => '/payment/callback', 'controller' => 'client/payment/callback.php', 'method' => 'GET', 'middleware' => [], 'name' => 'payment.callback'],
+    ['uri' => '/payment/paypal', 'controller' => 'client/payment/paypal.php', 'method' => 'GET', 'middleware' => ['auth'], 'name' => 'payment.paypal'],
+    ['uri' => '/payment/paypal-success', 'controller' => 'client/payment/paypal-success.php', 'method' => 'GET', 'middleware' => ['auth'], 'name' => 'payment.paypal-success'],
+    ['uri' => '/payment/paypal-cancel', 'controller' => 'client/payment/paypal-cancel.php', 'method' => 'GET', 'middleware' => ['auth'], 'name' => 'payment.paypal-cancel'],
+    ['uri' => '/payment/cod', 'controller' => 'client/payment/cod.php', 'method' => 'GET', 'middleware' => ['auth'], 'name' => 'payment.cod'],
 
-// Product Routes
-//$router->get('/products', 'client/products/index.php');
-$router->get('/product/{id}', 'client/products/show.php');
-
-// Cart Routes
-$router->get('/cart', 'client/cart/index.php');
-$router->get('/addcart/{id}', 'client/cart/addcart.php');
-$router->post('/removecart', 'client/cart/remove.php');
-$router->post('/updatecart', 'client/cart/update.php');
-$router->post('/cart/checkout', 'client/cart/checkout.php');
-
-// User Account Routes
-$router->get('/profile', 'client/profile/index.php');
-$router->post('/register', 'client/registration/index.php')->only('guest');
-$router->post('/login', 'client/login/index.php')->only('guest');
-$router->post('/logout', 'client/login/destroy.php')->only('auth');
-
-// Motorcycle-specific Routes
-$router->get('/motorcycles', 'client/motorcycles/index.php');
-$router->get('/motorcycle/{id}', 'client/motorcycles/show.php');
-$router->get('/test-ride/request/{id}', 'client/test-rides/request.php')->only('auth');
-$router->post('/test-ride/submit', 'client/test-rides/store.php')->only('auth');
-$router->get('/financing/calculator/{id}', 'client/financing/calculator.php');
-$router->post('/financing/apply', 'client/financing/apply.php')->only('auth');
-$router->post('/reviews/submit', 'client/reviews/store.php')->only('auth');
-$router->get('/trade-in', 'client/trade-in/index.php')->only('auth');
-$router->post('/trade-in/submit', 'client/trade-in/store.php')->only('auth');
-
-/**** Admin Interface Routes ****/
-
-// Dashboard Home
-$router->get('/dashboard', 'dashboard/index.php')->only('superuser');
-
-// Product Management
-$router->get('/tbproducts', 'dashboard/products/index.php')->only('superuser');
-$router->post('/tbproducts', 'dashboard/products/index.php')->only('superuser');
-$router->post('/tbproducts/update', 'dashboard/products/index.php')->only('superuser');
-$router->post('/tbproducts/delete', 'dashboard/products/index.php')->only('superuser');
-
-// Category Management
-$router->get('/tbcategories', 'dashboard/categories/index.php')->only('superuser');
-$router->post('/tbcategories', 'dashboard/categories/index.php')->only('superuser');
-$router->post('/tbcategories/update', 'dashboard/categories/index.php')->only('superuser');
-$router->post('/tbcategories/delete', 'dashboard/categories/index.php')->only('superuser');
-
-// Order Management
-$router->get('/tborders', 'dashboard/orders/index.php')->only('superuser');
-$router->post('/tborders', 'dashboard/orders/index.php')->only('superuser');
-$router->post('/tborders/update', 'dashboard/orders/index.php')->only('superuser');
-$router->post('/tborders/delete', 'dashboard/orders/index.php')->only('superuser');
-
-// User Management
-$router->get('/tbusers', 'dashboard/users/index.php')->only('superuser');
-$router->post('/tbusers/update', 'dashboard/users/index.php');
-$router->post('/tbusers/delete', 'dashboard/users/index.php')->only('superuser');
-
-// Motorcycle Management
-$router->get('/motorcycles/admin', 'dashboard/motorcycles/index.php')->only('superuser');
-$router->get('/motorcycles/create', 'dashboard/motorcycles/create.php')->only('superuser');
-$router->post('/motorcycles', 'dashboard/motorcycles/store.php')->only('superuser');
-$router->get('/motorcycles/edit/{id}', 'dashboard/motorcycles/edit.php')->only('superuser');
-$router->post('/motorcycles/update', 'dashboard/motorcycles/update.php')->only('superuser');
-$router->post('/motorcycles/delete', 'dashboard/motorcycles/delete.php')->only('superuser');
-
-// Brand Management
-$router->get('/brands', 'dashboard/brands/index.php')->only('superuser');
-$router->post('/brands', 'dashboard/brands/store.php')->only('superuser');
-$router->post('/brands/update', 'dashboard/brands/update.php')->only('superuser');
-$router->post('/brands/delete', 'dashboard/brands/delete.php')->only('superuser');
-
-// Test Ride Management
-$router->get('/test-rides/admin', 'dashboard/test-rides/index.php')->only('superuser');
-$router->post('/test-rides/update-status', 'dashboard/test-rides/update-status.php')->only('superuser');
-
-// Financing Options Management
-$router->get('/financing-options', 'dashboard/financing/index.php')->only('superuser');
-$router->post('/financing-options', 'dashboard/financing/store.php')->only('superuser');
-$router->post('/financing-options/update', 'dashboard/financing/update.php')->only('superuser');
-$router->post('/financing-options/delete', 'dashboard/financing/delete.php')->only('superuser');
+    // Webhook Routes
+    ['uri' => '/webhooks/stripe', 'controller' => 'webhooks/stripe.php', 'method' => 'POST', 'middleware' => [], 'name' => 'webhooks.stripe'],
+];
